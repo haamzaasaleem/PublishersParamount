@@ -30,7 +30,6 @@ class User(AbstractUser):
 
     role = models.CharField(choices=ROLES, max_length=50, default=AUTHOR)
     gender = models.CharField(choices=GENDER, max_length=100, default=MALE)
-    user_image = models.ImageField(upload_to='user_image/', null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
@@ -40,6 +39,7 @@ class User(AbstractUser):
 
 class BaseProfile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
+    user_image = models.ImageField(upload_to='user_image/', null=True, blank=True)
     bio = models.TextField(null=True, blank=True)
     phone = models.CharField(max_length=50, null=True, blank=True)
     address = models.TextField(null=True, blank=True)

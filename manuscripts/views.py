@@ -4,6 +4,9 @@ from manuscripts.serializers import ManuscriptSerializer
 
 
 class ManuscriptViewSet(viewsets.ModelViewSet):
+    # import pdb; pdb.set_trace()
     queryset = Manuscript.objects.all()
     serializer_class = ManuscriptSerializer
-    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
+    permission_classes = [permissions.IsAuthenticated]
+
+    
