@@ -29,10 +29,12 @@ class UserViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all().order_by('-date_joined')
     serializer_class = UserSerializer
     permission_classes = [permissions.IsAuthenticatedOrReadOnly]
+    
+    def list(self, request):
+        import pdb; pdb.set_trace()
+        user=request.user
 
-    def retrieve(self, request, *args, **kwargs):
-        instance = self.get_object()
-        serializer = self.get_serializer(instance)
+        serializer=UserSerializer(user)
         return Response(serializer.data)
     
 
