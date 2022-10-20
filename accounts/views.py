@@ -1,4 +1,5 @@
 # from django.contrib.auth.models import Group
+from functools import partial
 from rest_framework import viewsets, permissions
 
 from .models import Author, Editor, EditorInChief
@@ -31,12 +32,22 @@ class UserViewSet(viewsets.ModelViewSet):
     permission_classes = [permissions.IsAuthenticatedOrReadOnly]
     
     def list(self, request):
-        # import pdb; pdb.set_trace()
         user=request.user
-
         serializer=UserSerializer(user)
         return Response(serializer.data)
     
+    def partial_update(self, request):
+        import pdb; pdb.set_trace()
+        user_id=request.user.id
+
+        user=User.objects.get(id=user_id)
+
+        serializer=UserSerializer(user,data=request.data,partial=True)
+        if serializer.is_valid():
+            serializer.save()   
+            return Response(serializer.data,status=status.HTTP_201_CREATED)
+        return Response(serializer.errors,status=status.HTTP_400_BAD_REQUEST)
+
 
     def perform_create(self, serializer):
         # instance.password=make_password(self.password)
@@ -48,17 +59,6 @@ class UserViewSet(viewsets.ModelViewSet):
         elif instance.role == 'eic':
             EditorInChief.objects.get_or_create(user=instance)
         instance.save()
-
-class UserVS(viewsets.ViewSet):
-
-    def list(self,request):
-        users=User.objects.all()
-        serializer=UserSerializer(users,many=True)
-    
-    def retrieve(self,request):
-        user=User.objects.get(user=request.user)
-        serializer=UserSerializer(user)
-        return Response(serializer.data)
 
 
 # class UserLoginViewset(APIView):
