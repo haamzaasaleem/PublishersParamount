@@ -27,16 +27,35 @@ class UserViewSet(viewsets.ModelViewSet):
         serializer=UserSerializer(user)
         return Response(serializer.data)
     
-    def partial_update(self, request):
-        import pdb; pdb.set_trace()
+    def update(self, request):
         user_id=request.user.id
+        user_data={
 
+            'email':request.data['email'],
+            'gender':request.data['gender']
+        }
+
+        profile_data={
+            'first_name':request.data['first_name'],
+            'last_name':request.data['last_name'],
+            'bio':request.data['bio'],
+            'phone':request.data['phone'],
+            'address':request.data['address'],
+            'user_image':request.data['user_image'],
+        }
+        profile
+        if request.user.role=='author':
+            author=Author.objects.get(user_id=user_id)
+            profile=AuthorProfileSerializer(author,data=profile_data,partial=True)
+        if request.user.role=='editor':
+            editor=Editor.objects.get(user_id=user_id)
+            profile=EditorProfileSerializer(editor,data=profile_data,partial=True)
+        
         user=User.objects.get(id=user_id)
-
-        serializer=UserSerializer(user,data=request.data,partial=True)
-        if serializer.is_valid():
+        serializer=UserSerializer(user,data=user_data,partial=True)
+        if serializer.is_valid() and profile.is_valid() :
             serializer.save()   
-            return Response(serializer.data,status=status.HTTP_201_CREATED)
+            return Response(serializer.data,profile.data,status=status.HTTP_201_CREATED)
         return Response(serializer.errors,status=status.HTTP_400_BAD_REQUEST)
 
 
