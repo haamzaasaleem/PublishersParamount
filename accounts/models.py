@@ -32,6 +32,7 @@ class User(AbstractUser):
     gender = models.CharField(choices=GENDER, max_length=100, default=MALE)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+    user_image = models.ImageField(upload_to='user_image/', null=True, blank=True)
 
     def __str__(self):
         return f"{self.username} [{self.get_role_display()}]"
