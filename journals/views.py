@@ -1,4 +1,4 @@
-from turtle import pd
+
 from journals.models import Journal
 from journals.serialiazers import JournalSerializer
 from rest_framework import permissions, viewsets

@@ -1,7 +1,4 @@
-# from django.contrib.auth.models import Group
-from functools import partial
 from rest_framework import viewsets, permissions
-
 from .models import Author, Editor, EditorInChief
 from .serializers import *
 from django.contrib.auth import get_user_model
