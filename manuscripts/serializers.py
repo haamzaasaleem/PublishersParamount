@@ -5,4 +5,4 @@ from manuscripts.models import Manuscript
 class ManuscriptSerializer(serializers.ModelSerializer):
     class Meta:
         model = Manuscript
-        fields = ['title','description','file']
+        fields = ('__all__')

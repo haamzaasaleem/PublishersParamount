@@ -19,3 +19,5 @@ class ManuscriptViewSet(viewsets.ModelViewSet):
         manuscript=Manuscript.objects.filter(author_id=author.id)
         serializer=ManuscriptSerializer(manuscript,many=True)
         return Response(serializer.data)
+
+    
