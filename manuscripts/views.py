@@ -25,25 +25,24 @@ class ManuscriptViewSet(viewsets.ModelViewSet):
         return Response(serializer.data)
 
     def create(self, request):
-        # import pdb; pdb.set_trace()
 
-        data = request.data
-        user = data['author']
-        author = Author.objects.get(user_id=user)
+        author = Author.objects.get(user_id=request.data['author'])
 
-        data['author'] = author.id
+        request.data['author']=author.id
 
-        serializer = ManuscriptSerializer(data=data)
+
+
+        serializer = ManuscriptSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
-            return Response(serializer.data)
-        return Response(serializer.errors)
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-    def partial_update(self, request,pk):
+    def partial_update(self, request, pk):
         manuscript = Manuscript.objects.get(id=pk)
         data = request.data
 
-        serializer=ManuscriptSerializer(manuscript,data=request.data,partial=True)
+        serializer = ManuscriptSerializer(manuscript, data=request.data, partial=True)
         if serializer.is_valid():
             serializer.save()
             return Response(
