@@ -11,7 +11,7 @@ User = get_user_model()
 class UserSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = User
-        fields = ['id', 'username', 'email', 'role', 'gender']
+        fields = ['id', 'username', 'email', 'role', 'gender' , 'password']
 
 
 class AuthorProfileSerializer(serializers.HyperlinkedModelSerializer):
