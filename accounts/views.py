@@ -45,7 +45,7 @@ class UserViewSet(viewsets.ModelViewSet):
             'bio': request.data['bio'],
             'phone': request.data['phone'],
             'address': request.data['address'],
-            'user_image': request.data['user_image'],
+            # 'user_image': request.data['user_image'],
         }
         profile = None
         if request.user.role == 'author':
