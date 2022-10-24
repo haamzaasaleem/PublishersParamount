@@ -5,13 +5,14 @@ from accounts.models import *
 from manuscripts.serializers import ManuscriptSerializer
 from rest_framework.response import Response
 from rest_framework import status
+from rest_framework.parsers import MultiPartParser, FormParser
 
 class ManuscriptViewSet(viewsets.ModelViewSet):
     # import pdb; pdb.set_trace()
     queryset = Manuscript.objects.all()
     serializer_class = ManuscriptSerializer
     permission_classes = [permissions.IsAuthenticated]
-    
+    parser_classes = (MultiPartParser, FormParser)
     def list(self, request):
         # import pdb; pdb.set_trace()
         user=request.user.id
@@ -22,6 +23,7 @@ class ManuscriptViewSet(viewsets.ModelViewSet):
         return Response(serializer.data)
 
     def create(self,request):
+        
         user=request.user.id
         author=Author.objects.get(user_id=user)
         data=request.data
