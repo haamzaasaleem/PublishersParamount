@@ -29,7 +29,7 @@ class UserViewSet(viewsets.ModelViewSet):
 
         return Response(dict)
 
-    def update(self, request):
+    def update(self, request,pk=None):
         user_id = request.user.id
         user_role = request.user.role
 
