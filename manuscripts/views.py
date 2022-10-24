@@ -24,7 +24,8 @@ class ManuscriptViewSet(viewsets.ModelViewSet):
         return Response(serializer.data)
 
     def create(self,request):
-        import pdb; pdb.set_trace()
+        # import pdb; pdb.set_trace()
+
         data=request.data 
         user=data['author']
         author=Author.objects.get(user_id=user)
