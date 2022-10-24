@@ -1,6 +1,3 @@
-from cairo import Status
-from requests import request
-from yaml import serialize
 from rest_framework import permissions, viewsets
 from accounts.models import Author
 from manuscripts.models import Manuscript
