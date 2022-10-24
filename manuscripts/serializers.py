@@ -1,4 +1,6 @@
 from rest_framework import serializers
+from rest_framework.exceptions import *
+
 from manuscripts.models import Manuscript
 
 
@@ -13,3 +15,4 @@ class ManuscriptSerializer(serializers.ModelSerializer):
         valid_extensions = ['.pdf','.doc','.docx']
         if not ext in valid_extensions:
             raise ValidationError(u'File not supported!')
+

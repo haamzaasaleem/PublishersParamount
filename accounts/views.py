@@ -20,12 +20,19 @@ class UserViewSet(viewsets.ModelViewSet):
     permission_classes = [permissions.IsAuthenticatedOrReadOnly]
 
     def list(self, request):
+        import pdb;pdb.set_trace()
         user = request.user
         serializer = UserSerializer(user)
-        return Response(serializer.data)
+        if user.role == 'author':
+            author = AuthorProfileSerializer(Author.objects.get(user_id=user.id))
+        dict = serializer.data | author.data
+
+        return Response(dict)
 
     def update(self, request):
         user_id = request.user.id
+        user_role = request.user.role
+
         user_data = {
 
             'email': request.data['email'],
