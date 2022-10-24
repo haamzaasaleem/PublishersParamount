@@ -1,3 +1,4 @@
+
 from rest_framework import permissions, viewsets
 from accounts.models import Author
 from manuscripts.models import Manuscript
@@ -23,7 +24,14 @@ class ManuscriptViewSet(viewsets.ModelViewSet):
         return Response(serializer.data)
 
     def create(self,request):
-        serializer=ManuscriptSerializer(data=request.data,many=True)
+        import pdb; pdb.set_trace()
+        data=request.data 
+        user=data['author']
+        author=Author.objects.get(user_id=user)
+
+        data['author']=author.id
+
+        serializer=ManuscriptSerializer(data=data)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data)
