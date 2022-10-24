@@ -59,7 +59,7 @@ class UserViewSet(viewsets.ModelViewSet):
         serializer = UserSerializer(user, data=user_data, partial=True)
         if serializer.is_valid() and profile.is_valid():
             serializer.save()
-            return Response(serializer.data, profile.data, status=status.HTTP_201_CREATED)
+            return Response(status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def perform_create(self, serializer):
