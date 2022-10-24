@@ -25,7 +25,7 @@ class ManuscriptViewSet(viewsets.ModelViewSet):
         user=request.user.id
         author=Author.objects.get(user_id=user)
         data=request.data
-        data['author'].append(author.id)
+        data["author"].append(author.id)
 
         serializer=ManuscriptSerializer(data=data)
         if serializer.is_valid():
@@ -33,4 +33,5 @@ class ManuscriptViewSet(viewsets.ModelViewSet):
             return Response(serializer.data)
         return Response(serializer.errors)
 
+    
     
