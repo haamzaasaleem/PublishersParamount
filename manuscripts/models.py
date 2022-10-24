@@ -19,7 +19,7 @@ class Manuscript(models.Model):
         (REJECTED, 'Rejected'),
         (MINOR, 'Minor'),
         (MAJOR, 'Major'),
-        (NA, 'None'),
+        (NA, 'under process'),
     )
 
     author = models.ForeignKey(Author, on_delete=models.CASCADE, related_name='manuscripts', null=True)
