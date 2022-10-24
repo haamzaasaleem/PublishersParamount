@@ -9,6 +9,7 @@ class Journal(models.Model):
     description = models.TextField()
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
+    journal_image=models.ImageField(upload_to='journal_image/', null=True, blank=True)
 
     def __str__(self):
         return self.title

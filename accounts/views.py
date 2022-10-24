@@ -1,3 +1,4 @@
+
 from rest_framework import viewsets, permissions
 from .models import Author, Editor, EditorInChief
 from .serializers import *
@@ -66,6 +67,23 @@ class UserViewSet(viewsets.ModelViewSet):
         elif instance.role == 'eic':
             EditorInChief.objects.get_or_create(user=instance)
         instance.save()
+
+class resetUserPasswordView(viewsets.ModelViewSet):
+    # queryset = User.objects.all().order_by('-date_joined')
+    serializer_class = UserSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    # class partial_update(self, request):
+
+    #     user=User.objects.get(id=request.user.id)
+    #     serializer=UserSerializer(data=request.data)
+    #     if serializer.is_valid():
+    #         serializer.data.password=set_password(request.data.password)
+    #         serializer.save()
+    #         return Response({'msg':'Password Updated'})
+    #     return Response(serializer.errors,{"msg":"unable to update password"})
+
+        
 
 
 # class UserLoginViewset(APIView):
