@@ -12,7 +12,7 @@ class Manuscript(models.Model):
     REJECTED = 'rejected'
     MINOR = 'minor'
     MAJOR = 'major'
-    NA = 'none'
+    NA = 'under process'
 
     STATUS = (
         (APPROVED, 'Approved'),
