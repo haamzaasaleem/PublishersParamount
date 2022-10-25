@@ -1,4 +1,6 @@
 from rest_framework import viewsets, permissions
+from rest_framework_simplejwt.views import TokenViewBase
+
 from .models import Author, Editor, EditorInChief
 from .serializers import *
 from django.contrib.auth import get_user_model
@@ -7,9 +9,12 @@ from django.contrib.auth.hashers import make_password
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework_simplejwt.tokens import RefreshToken
-
+from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
+from rest_framework_simplejwt.views import TokenObtainPairView
 User = get_user_model()
+class LoginView(TokenObtainPairView):
 
+    serializer_class = MyTokenObtainPairSerializer
 
 class UserViewSet(viewsets.ModelViewSet):
     """

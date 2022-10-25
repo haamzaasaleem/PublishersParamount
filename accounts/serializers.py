@@ -4,14 +4,27 @@ from django.contrib.auth.models import Group
 from rest_framework import serializers
 from django.contrib.auth import get_user_model
 from accounts.models import *
+from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
+from rest_framework_simplejwt.views import TokenObtainPairView
 
 User = get_user_model()
+
+
+class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
+    def validate(self, attrs):
+        data = super().validate(attrs)
+        token = self.get_token(self.user)
+        data['user_id'] = token['user_id']
+        user = User.objects.get(id=data['user_id'])
+        data['user_role']=user.role
+
+        return data
 
 
 class UserSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = User
-        fields = ['id', 'username', 'email', 'role', 'gender' ]
+        fields = ['id', 'username', 'email', 'role', 'gender']
 
 
 class AuthorProfileSerializer(serializers.HyperlinkedModelSerializer):

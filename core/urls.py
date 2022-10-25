@@ -15,20 +15,23 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
+from accounts.views import LoginView
 from rest_framework_simplejwt.views import (
     TokenObtainPairView,
-    TokenRefreshView,
+    TokenRefreshView, TokenViewBase,
 )
 from django.conf.urls.static import static
 from django.conf import settings
 
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
-    path('api-auth/', include('rest_framework.urls')),
-    path('api/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
-    path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
-    path('api/', include('accounts.urls')),
-    path('api/', include('journals.urls')),
-    path('api/', include('manuscripts.urls')),
-]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+                  path('admin/', admin.site.urls),
+                  path('api-auth/', include('rest_framework.urls')),
+                  path('login/', LoginView.as_view(), name='login'),
+                  path('api/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
+                  path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
+                  path('api/', include('accounts.urls')),
+                  path('api/', include('journals.urls')),
+                  path('api/', include('manuscripts.urls')),
+
+              ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
