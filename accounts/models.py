@@ -5,10 +5,11 @@ from django.urls import reverse
 from django_rest_passwordreset.signals import reset_password_token_created
 from django.core.mail import send_mail
 
+
 @receiver(reset_password_token_created)
 def password_reset_token_created(sender, instance, reset_password_token, *args, **kwargs):
-
-    email_plaintext_message = "{}?token={}".format(reverse('password_reset:reset-password-request'), reset_password_token.key)
+    email_plaintext_message = "{}?token={}".format(reverse('password_reset:reset-password-request'),
+                                                   reset_password_token.key)
 
     send_mail(
         # title:
@@ -21,6 +22,7 @@ def password_reset_token_created(sender, instance, reset_password_token, *args, 
         [reset_password_token.user.email]
     )
 
+
 class User(AbstractUser):
     ADMIN = 'admin'
     STAFF = 'staff'
@@ -28,7 +30,7 @@ class User(AbstractUser):
     REVIEWER = 'reviewer'
     EDITOR = 'editor'
     EIC = 'eic'
-    
+
     ROLES = (
         (ADMIN, 'Admin'),
         (STAFF, 'Staff'),
@@ -60,8 +62,8 @@ class User(AbstractUser):
 class BaseProfile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     user_image = models.ImageField(upload_to='user_image/', null=True, blank=True)
-    first_name=models.CharField(max_length=50, null=True, blank=True)
-    last_name=models.CharField(max_length=50, null=True, blank=True)
+    first_name = models.CharField(max_length=50, null=True, blank=True)
+    last_name = models.CharField(max_length=50, null=True, blank=True)
     bio = models.TextField(null=True, blank=True)
     phone = models.CharField(max_length=50, null=True, blank=True)
     address = models.TextField(null=True, blank=True)
@@ -96,3 +98,25 @@ class Editor(BaseProfile):
 
     def __str__(self):
         return f"{self.user.username} [{self.user.get_role_display()}]"
+
+
+class Reviewer(BaseProfile):
+    editor = models.ForeignKey(Editor, on_delete=models.CASCADE, null=True)
+
+    def __str__(self):
+        return f"{self.user.username} [{self.user.get_role_display()}]"
+
+
+class EicStaff(BaseProfile):
+    eic = models.ForeignKey(EditorInChief, on_delete=models.CASCADE, null=True)
+
+    def __str__(self):
+        return f"{self.user.username} [{self.user.get_role_display()}]"
+
+
+class EditorStaff(BaseProfile):
+    editor = models.ForeignKey(Editor, on_delete=models.CASCADE, related_name='manuscripts', null=True)
+
+    def __str__(self):
+        return f"{self.user.username} [{self.user.get_role_display()}]"
+

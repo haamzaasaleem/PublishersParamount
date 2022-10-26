@@ -28,9 +28,7 @@ class ManuscriptViewSet(viewsets.ModelViewSet):
 
         author = Author.objects.get(user_id=request.data['author'])
 
-        request.data['author']=author.id
-
-
+        request.data['author'] = author.id
 
         serializer = ManuscriptSerializer(data=request.data)
         if serializer.is_valid():
@@ -48,3 +46,20 @@ class ManuscriptViewSet(viewsets.ModelViewSet):
             return Response(
                 {"msg": "Status Updated"}
             )
+
+
+class SaveManuscriptView(viewsets.ModelViewSet):
+    queryset = Manuscript.objects.all()
+    serializer_class = ManuscriptSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    def partial_update(self, request, pk=None):
+        manuscript_id = request.data['id']
+
+        manuscript = Manuscript.objects.get(id=manuscript_id)
+        manuscript.saved = True
+        manuscript.save()
+        return Response(
+            {'msg': 'uploaded'},
+            status=status.HTTP_200_OK
+        )

@@ -33,8 +33,15 @@ class UserViewSet(viewsets.ModelViewSet):
         user = request.user
         serializer = UserSerializer(user)
         if user.role == 'author':
-            author = AuthorProfileSerializer(Author.objects.get(user_id=user.id))
-        dict = serializer.data | author.data
+            current_user = AuthorProfileSerializer(Author.objects.get(user_id=user.id))
+        elif user.role == 'editor':
+            current_user = EditorProfileSerializer(Editor.objects.get(user_id=user.id))
+        elif user.role == 'reviewer':
+            current_user = ReviewerProfileSerializer(Reviewer.objects.get(user_id=user.id))
+        elif user.role == 'eic':
+            current_user = EicProfileSerializer(EditorInChief.objects.get(user_id=user.id))
+
+        dict = serializer.data | current_user.data
 
         return Response(dict)
 
@@ -79,6 +86,8 @@ class UserViewSet(viewsets.ModelViewSet):
             Editor.objects.get_or_create(user=instance)
         elif instance.role == 'eic':
             EditorInChief.objects.get_or_create(user=instance)
+        elif instance.role == 'reviewer':
+            Reviewer.objects.get_or_create(user=instance)
         instance.save()
 
 
@@ -109,7 +118,6 @@ class ResetPasswordview(viewsets.ModelViewSet):
             )
 
 
-# send_mail('Django Test Mail','this is test mail body from django','haamzaasaleem@gmail.com', ['haamzaasaleem@gmail.com'],fail_silently=False)
 class ForgotPasswordView(viewsets.ModelViewSet):
     queryset = User.objects.all()
     serializer_class = UserSerializer

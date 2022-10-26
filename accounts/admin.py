@@ -1,14 +1,12 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
-from accounts.models import User, Author, Editor, EditorInChief
-
+from accounts.models import *
 
 class UserAdmin(BaseUserAdmin):
     # list_display = ("username", "email", "first_name", "last_name", "is_staff")
     list_filter = ("is_staff", "is_superuser", "is_active", "role", "gender")
     fieldsets = (
         (None, {'fields': ('email', 'password')}),
-        ('Personal info', {'fields': ("first_name", "last_name",)}),
         ('Permissions', {"fields": (
             "is_active",
             "is_staff",
@@ -29,3 +27,6 @@ admin.site.register(User, UserAdmin)
 admin.site.register(Author)
 admin.site.register(Editor)
 admin.site.register(EditorInChief)
+admin.site.register(Reviewer)
+admin.site.register(EicStaff)
+admin.site.register(EditorStaff)

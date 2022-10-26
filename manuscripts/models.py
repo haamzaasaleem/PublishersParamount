@@ -29,6 +29,7 @@ class Manuscript(models.Model):
     keywords = models.TextField(default='')
     article_type = models.CharField(max_length=100, blank=True, null=True)
     status = models.CharField(max_length=50, choices=STATUS, default=NA)
+    saved = models.BooleanField(default=False)
     # editor=
     file = models.FileField(upload_to='manuscripts/', null=True, blank=True)
     # editor_assigned_date = models.DateTimeField(auto_now_add=True)

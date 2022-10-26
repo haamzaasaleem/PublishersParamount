@@ -16,7 +16,7 @@ class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
         token = self.get_token(self.user)
         data['user_id'] = token['user_id']
         user = User.objects.get(id=data['user_id'])
-        data['user_role']=user.role
+        data['user_role'] = user.role
 
         return data
 
@@ -36,7 +36,18 @@ class AuthorProfileSerializer(serializers.HyperlinkedModelSerializer):
 class EditorProfileSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model: Editor
-        fields = ('__all__')
+        fields = '__all__'
+
+
+class ReviewerProfileSerializer(serializers.HyperlinkedModelSerializer):
+    class Meta:
+        model: Reviewer
+        fields = '__all__'
+
+class EicProfileSerializer(serializers.HyperlinkedModelSerializer):
+    class Meta:
+        model: EditorInChief
+        fields = '__all__'
 
 # class UserLoginSerializer(serializers.HyperlinkedModelSerializer):
 #     class Meta:
