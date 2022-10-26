@@ -24,7 +24,8 @@ class Manuscript(models.Model):
 
     author = models.ForeignKey(Author, on_delete=models.CASCADE, related_name='manuscripts', null=True)
     title = models.CharField(max_length=100)
-    abstract = models.TextField()
+
+    abstract = models.TextField(max_length=300)
     keywords = models.TextField(default='')
     article_type = models.CharField(max_length=100, blank=True, null=True)
     status = models.CharField(max_length=50, choices=STATUS, default=NA)

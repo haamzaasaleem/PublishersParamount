@@ -13,7 +13,6 @@ https://docs.djangoproject.com/en/4.1/ref/settings/
 from pathlib import Path
 from datetime import timedelta
 
-
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -43,6 +42,7 @@ INSTALLED_APPS = [
     'journals',
     'manuscripts',
     'corsheaders',
+    'django_rest_passwordreset',
 ]
 
 MIDDLEWARE = [
@@ -152,7 +152,6 @@ PASSWORD_HASHERS = [
     'django.contrib.auth.hashers.ScryptPasswordHasher',
 ]
 
-
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:8000",
     "http://127.0.0.1:3000",
@@ -186,8 +185,10 @@ SIMPLE_JWT = {
     'TOKEN_USER_CLASS': 'rest_framework_simplejwt.models.TokenUser',
 
     'JTI_CLAIM': 'jti',
- 
+
     'SLIDING_TOKEN_REFRESH_EXP_CLAIM': 'refresh_exp',
     'SLIDING_TOKEN_LIFETIME': timedelta(minutes=5),
     'SLIDING_TOKEN_REFRESH_LIFETIME': timedelta(days=1),
 }
+
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'

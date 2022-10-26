@@ -11,10 +11,13 @@ from rest_framework import status
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from rest_framework_simplejwt.views import TokenObtainPairView
-User = get_user_model()
-class LoginView(TokenObtainPairView):
 
+User = get_user_model()
+
+
+class LoginView(TokenObtainPairView):
     serializer_class = MyTokenObtainPairSerializer
+
 
 class UserViewSet(viewsets.ModelViewSet):
     """
@@ -34,10 +37,8 @@ class UserViewSet(viewsets.ModelViewSet):
 
         return Response(dict)
 
-    def update(self, request,pk=None):
+    def update(self, request, pk=None):
         user_id = request.user.id
-        user_role = request.user.role
-
         user_data = {
 
             'email': request.data['email'],
@@ -79,29 +80,29 @@ class UserViewSet(viewsets.ModelViewSet):
             EditorInChief.objects.get_or_create(user=instance)
         instance.save()
 
-# class resetUserPasswordView(viewsets.ModelViewSet):
-#     # queryset = User.objects.all().order_by('-date_joined')
-#     serializer_class = UserSerializer
-#     permission_classes = [permissions.IsAuthenticated]
 
-#     # class partial_update(self, request):
+class ResetPasswordview(viewsets.ModelViewSet):
+    queryset = User.objects.all()
+    serializer_class = UserSerializer
+    permission_classes = [permissions.IsAuthenticated]
 
-#     #     user=User.objects.get(id=request.user.id)
-#     #     serializer=UserSerializer(data=request.data)
-#     #     if serializer.is_valid():
-#     #         serializer.data.password=set_password(request.data.password)
-#         serializer.save()
-#         return Response({'msg':'Password Updated'})
-#     return Response(serializer.errors,{"msg":"unable to update password"})
+    def partial_update(self, request, pk=None):
+        user = User.objects.get(id=request.user.id)
+        if request.data['password'] != request.data['newPassword']:
 
-
-# class UserLoginViewset(APIView):
-
-#     def post(self,request):
-
-#         serializer=UserLoginSerializer(data=request.data)
-#         if serializer.is_valid():
-#             if request.data['role'] is 'author':
-#                 token=get_tokens_for_user()
-#             return Response({"msg":"Student Created"},status=status.HTTP_201_CREATED)
-#         return Response(serializer.errors,status=status.HTTP_400_BAD_REQUEST)
+            if user.check_password(request.data['password']):
+                user.set_password(request.data['newPassword'])
+                user.save()
+                return Response(
+                    {"msg": "Password Updated Successfully"},
+                    status=status.HTTP_200_OK
+                )
+            return Response(
+                {"msg": "Password does not matched"},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+        else:
+            return Response(
+                {"msg": "You cannot use your current password again "},
+                status=status.HTTP_400_BAD_REQUEST
+            )
