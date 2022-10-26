@@ -2,7 +2,9 @@ from email.policy import default
 from django.db import models
 from django.contrib.auth import get_user_model
 
-from accounts.models import Author
+import journals
+from journals.models import *
+from accounts.models import *
 
 User = get_user_model()
 
@@ -35,6 +37,8 @@ class Manuscript(models.Model):
     # editor_assigned_date = models.DateTimeField(auto_now_add=True)
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
+    journal = models.ForeignKey(Journal, on_delete=models.CASCADE, related_name='manuscripts', null=True)
+
 
     def __str__(self):
         return self.title
