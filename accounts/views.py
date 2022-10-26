@@ -11,6 +11,7 @@ from rest_framework import status
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from rest_framework_simplejwt.views import TokenObtainPairView
+from django.core.mail import send_mail
 
 User = get_user_model()
 
@@ -105,4 +106,20 @@ class ResetPasswordview(viewsets.ModelViewSet):
             return Response(
                 {"msg": "You cannot use your current password again "},
                 status=status.HTTP_400_BAD_REQUEST
+            )
+
+
+# send_mail('Django Test Mail','this is test mail body from django','haamzaasaleem@gmail.com', ['haamzaasaleem@gmail.com'],fail_silently=False)
+class ForgotPasswordView(viewsets.ModelViewSet):
+    queryset = User.objects.all()
+    serializer_class = UserSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    def partial_update(self, request, pk=None):
+        user = User.objects.get(email=request.data['email'])
+
+        if user:
+            send_mail(
+                f'Password Reset URL for USER: #{request.user.username}',
+
             )

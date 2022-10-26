@@ -10,14 +10,6 @@ from rest_framework_simplejwt.views import TokenObtainPairView
 User = get_user_model()
 
 
-class PasswordResetSerializer(serializers.HyperlinkedModelSerializer):
-    class Meta:
-        model = User
-        field = ['password']
-
-
-
-
 class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
     def validate(self, attrs):
         data = super().validate(attrs)
