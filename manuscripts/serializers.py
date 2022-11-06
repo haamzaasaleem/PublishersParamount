@@ -7,7 +7,7 @@ from manuscripts.models import Manuscript
 class ManuscriptSerializer(serializers.ModelSerializer):
     class Meta:
         model = Manuscript
-        fields = ['id', 'title', 'author', 'abstract', 'keywords', 'article_type', 'file', 'status', 'created', 'saved']
+        fields = ['id', 'title', 'author', 'abstract', 'keywords', 'article_type', 'manuscript_file','cover_file','abstract_file','journal', 'status', 'created', 'saved']
 
 
     def validate_file_extension(self, value):
