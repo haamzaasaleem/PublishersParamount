@@ -91,7 +91,6 @@ class UserViewSet(viewsets.ModelViewSet):
         instance.save()
 
 
-
 class ChangePasswordView(generics.UpdateAPIView):
     """
     An endpoint for changing password.
@@ -125,6 +124,8 @@ class ChangePasswordView(generics.UpdateAPIView):
             return Response(response)
 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
 class ResetPasswordview(viewsets.ModelViewSet):
     queryset = User.objects.all()
     serializer_class = UserSerializer

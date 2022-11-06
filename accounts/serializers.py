@@ -3,7 +3,7 @@ from pyexpat import model
 from django.contrib.auth.models import Group
 from rest_framework import serializers
 from django.contrib.auth import get_user_model
-    from accounts.models import *
+from accounts.models import *
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from rest_framework_simplejwt.views import TokenObtainPairView
 
