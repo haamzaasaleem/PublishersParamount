@@ -30,6 +30,8 @@ class User(AbstractUser):
     REVIEWER = 'reviewer'
     EDITOR = 'editor'
     EIC = 'eic'
+    EIC_STAFF = 'eic_staff'
+    E_STAFF = 'e_staff'
 
     ROLES = (
         (ADMIN, 'Admin'),
@@ -38,6 +40,8 @@ class User(AbstractUser):
         (REVIEWER, 'Reviewer'),
         (EDITOR, 'Editor'),
         (EIC, 'Editor in Chief'),
+        (EIC_STAFF, 'Eic Staff'),
+        (E_STAFF, 'Editor Staff'),
     )
 
     MALE = 'male'

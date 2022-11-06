@@ -3,7 +3,7 @@ from pyexpat import model
 from django.contrib.auth.models import Group
 from rest_framework import serializers
 from django.contrib.auth import get_user_model
-from accounts.models import *
+    from accounts.models import *
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from rest_framework_simplejwt.views import TokenObtainPairView
 
@@ -44,10 +44,12 @@ class ReviewerProfileSerializer(serializers.HyperlinkedModelSerializer):
         model: Reviewer
         fields = '__all__'
 
+
 class EicProfileSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model: EditorInChief
         fields = '__all__'
+
 
 # class UserLoginSerializer(serializers.HyperlinkedModelSerializer):
 #     class Meta:
@@ -59,3 +61,12 @@ class EicProfileSerializer(serializers.HyperlinkedModelSerializer):
 #     class Meta:
 #         model = Group
 #         fields = ['url', 'name']
+
+
+class ChangePasswordSerializer(serializers.HyperlinkedModelSerializer):
+    old_password = serializers.CharField(required=True)
+    new_password = serializers.CharField(required=True)
+
+    class Meta:
+        model = User
+        fields = ['old_password', 'new_password']

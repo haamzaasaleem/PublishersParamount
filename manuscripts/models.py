@@ -33,12 +33,21 @@ class Manuscript(models.Model):
     status = models.CharField(max_length=50, choices=STATUS, default=NA)
     saved = models.BooleanField(default=False)
     # editor=
-    file = models.FileField(upload_to='manuscripts/', null=True, blank=True)
+    manuscript_file = models.FileField(upload_to='manuscripts/file/', null=True, blank=True)
+    cover_file = models.FileField(upload_to='manuscripts/cover/', null=True, blank=True)
+    abstract_file = models.FileField(upload_to='manuscripts/abstract/', null=True, blank=True)
     # editor_assigned_date = models.DateTimeField(auto_now_add=True)
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
     journal = models.ForeignKey(Journal, on_delete=models.CASCADE, related_name='manuscripts', null=True)
 
-
     def __str__(self):
         return self.title
+
+
+class Figure(models.Model):
+    manuscript = models.ForeignKey(Manuscript, on_delete=models.CASCADE, null=True, blank=True)
+    file = models.FileField(upload_to='manuscripts/figures', null=True, blank=True)
+
+    def __str__(self):
+        return self.file.name

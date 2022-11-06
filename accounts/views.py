@@ -1,15 +1,11 @@
-from rest_framework import viewsets, permissions
-from rest_framework_simplejwt.views import TokenViewBase
+from rest_framework import viewsets, permissions, generics
+from rest_framework.permissions import IsAuthenticated
 
-from .models import Author, Editor, EditorInChief
 from .serializers import *
 from django.contrib.auth import get_user_model
-from rest_framework.views import APIView
-from django.contrib.auth.hashers import make_password
+
 from rest_framework.response import Response
 from rest_framework import status
-from rest_framework_simplejwt.tokens import RefreshToken
-from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from rest_framework_simplejwt.views import TokenObtainPairView
 from django.core.mail import send_mail
 
@@ -88,9 +84,47 @@ class UserViewSet(viewsets.ModelViewSet):
             EditorInChief.objects.get_or_create(user=instance)
         elif instance.role == 'reviewer':
             Reviewer.objects.get_or_create(user=instance)
+        elif instance.role == 'eic_staff':
+            EicStaff.objects.get_or_create(user=instance)
+        elif instance.role == 'e_staff':
+            EditorStaff.objects.get_or_create(user=instance)
         instance.save()
 
 
+
+class ChangePasswordView(generics.UpdateAPIView):
+    """
+    An endpoint for changing password.
+    """
+    serializer_class = ChangePasswordSerializer
+    model = User
+    permission_classes = [IsAuthenticated]
+
+    def get_object(self, queryset=None):
+        obj = self.request.user
+        return obj
+
+    def update(self, request, *args, **kwargs):
+        self.object = self.get_object()
+        serializer = self.get_serializer(data=request.data)
+
+        if serializer.is_valid():
+            # Check old password
+            if not self.object.check_password(request.data['old_password']):
+                return Response({"old_password": ["Wrong password."]}, status=status.HTTP_400_BAD_REQUEST)
+            # set_password also hashes the password that the user will get
+            self.object.set_password(request.data['new_password'])
+            self.object.save()
+            response = {
+                'status': 'success',
+                'code': status.HTTP_200_OK,
+                'message': 'Password updated successfully',
+                'data': []
+            }
+
+            return Response(response)
+
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 class ResetPasswordview(viewsets.ModelViewSet):
     queryset = User.objects.all()
     serializer_class = UserSerializer
