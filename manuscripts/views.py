@@ -16,7 +16,6 @@ class ManuscriptViewSet(viewsets.ModelViewSet):
     parser_classes = (MultiPartParser, FormParser)
 
     def list(self, request):
-        import pdb; pdb.set_trace()
         user = request.user.id
         author = Author.objects.get(user_id=user)
 

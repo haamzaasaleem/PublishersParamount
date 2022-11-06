@@ -133,24 +133,31 @@ class ResetPasswordview(viewsets.ModelViewSet):
 
     def partial_update(self, request, pk=None):
         user = User.objects.get(id=request.user.id)
-        if request.data['password'] != request.data['newPassword']:
+        if request.data['newPassword'] == request.data['confirmPassword']:
+            if request.data['currPassword'] != request.data['newPassword']:
 
-            if user.check_password(request.data['password']):
-                user.set_password(request.data['newPassword'])
-                user.save()
+                if user.check_password(request.data['password']):
+                    user.set_password(request.data['newPassword'])
+                    user.save()
+                    return Response(
+                        {"msg": "Password Updated Successfully"},
+                        status=status.HTTP_200_OK
+                    )
                 return Response(
-                    {"msg": "Password Updated Successfully"},
-                    status=status.HTTP_200_OK
+                    {"msg": "Password does not matched"},
+                    status=status.HTTP_400_BAD_REQUEST
                 )
-            return Response(
-                {"msg": "Password does not matched"},
-                status=status.HTTP_400_BAD_REQUEST
-            )
+            else:
+                return Response(
+                    {"msg": "You cannot use your current password again "},
+                    status=status.HTTP_400_BAD_REQUEST
+                )
         else:
             return Response(
-                {"msg": "You cannot use your current password again "},
+                {"msg": "Password and Confirm Password Does not match"},
                 status=status.HTTP_400_BAD_REQUEST
             )
+
 
 
 class ForgotPasswordView(viewsets.ModelViewSet):
