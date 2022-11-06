@@ -30,7 +30,7 @@ class UserSerializer(serializers.HyperlinkedModelSerializer):
 class AuthorProfileSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Author
-        fields = ['first_name', 'last_name', 'bio', 'phone', 'address']
+        fields = ['first_name', 'last_name', 'bio', 'phone', 'address','user_image']
 
 
 class EditorProfileSerializer(serializers.HyperlinkedModelSerializer):
