@@ -70,3 +70,9 @@ class ChangePasswordSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = User
         fields = ['old_password', 'new_password']
+
+
+class ResetPasswordSerializer(serializers.HyperlinkedModelSerializer):
+    class Meta:
+        model = User
+        fields = ['password']

@@ -8,7 +8,7 @@ router.register(r'password-reset', ResetPasswordview)
 
 urlpatterns = [
     path('accounts/', include(router.urls)),
-    # path('password_reset/', include('django_rest_passwordreset.urls', namespace='password_reset'))
+    path('password_reset/', include('django_rest_passwordreset.urls', namespace='password_reset')),
     path('change-password/', ChangePasswordView.as_view(), name='change-password'),
     
 ]

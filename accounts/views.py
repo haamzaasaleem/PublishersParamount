@@ -128,7 +128,7 @@ class ChangePasswordView(generics.UpdateAPIView):
 
 class ResetPasswordview(viewsets.ModelViewSet):
     queryset = User.objects.all()
-    serializer_class = UserSerializer
+    serializer_class = ResetPasswordSerializer
     permission_classes = [permissions.IsAuthenticated]
 
     def partial_update(self, request, pk=None):
@@ -136,7 +136,7 @@ class ResetPasswordview(viewsets.ModelViewSet):
         if request.data['newPassword'] == request.data['confirmPassword']:
             if request.data['currPassword'] != request.data['newPassword']:
 
-                if user.check_password(request.data['password']):
+                if user.check_password(request.data['currPassword']):
                     user.set_password(request.data['newPassword'])
                     user.save()
                     return Response(
