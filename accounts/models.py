@@ -106,6 +106,7 @@ class Editor(BaseProfile):
 
 class Reviewer(BaseProfile):
     editor = models.ForeignKey(Editor, on_delete=models.CASCADE, null=True)
+    keywords = models.CharField(max_length=5000, null=True, blank=True)
 
     def __str__(self):
         return f"{self.user.username} [{self.user.get_role_display()}]"
