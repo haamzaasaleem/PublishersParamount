@@ -128,7 +128,7 @@ class AssignedManuscript2Reviewer(viewsets.ModelViewSet):
         serializer = ManuscriptSerializer(manuscripts , many=True)
         # return Response(serializer.data)
         return Response(serializer.data)
-
+#Comment
     def partial_update(self, request, pk=None):
         reviewer = Reviewer.objects.get(user=request.user.id)
         manu=ManuRev.objects.get(manuscript=request.data['manuscript_id'],reviewer=reviewer.id)
