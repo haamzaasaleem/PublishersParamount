@@ -36,13 +36,13 @@ class AuthorProfileSerializer(serializers.HyperlinkedModelSerializer):
 class EditorProfileSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model: Editor
-        fields = '__all__'
+        fields = ['first_name', 'last_name', 'bio', 'phone', 'address','user_image']
 
 
 class ReviewerProfileSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
-        model= Reviewer
-        fields = '__all__'
+        model = Reviewer
+        fields = ['first_name', 'last_name', 'bio', 'phone', 'address','user_image']
 
 
 class EicProfileSerializer(serializers.HyperlinkedModelSerializer):
