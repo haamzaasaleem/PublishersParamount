@@ -64,6 +64,9 @@ class UserViewSet(viewsets.ModelViewSet):
         if request.user.role == 'editor':
             editor = Editor.objects.get(user_id=user_id)
             profile = EditorProfileSerializer(editor, data=profile_data, partial=True)
+        if request.user.role == 'reviewer':
+            editor = Reviewer.objects.get(user_id=user_id)
+            profile = ReviewerProfileSerializer(editor, data=profile_data, partial=True)
 
         user = User.objects.get(id=user_id)
         serializer = UserSerializer(user, data=user_data, partial=True)
