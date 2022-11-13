@@ -41,7 +41,7 @@ class EditorProfileSerializer(serializers.HyperlinkedModelSerializer):
 
 class ReviewerProfileSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
-        model: Reviewer
+        model= Reviewer
         fields = '__all__'
 
 
