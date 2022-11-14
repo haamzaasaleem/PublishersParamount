@@ -10,14 +10,14 @@ from PIL import Image
 from core.settings import BASE_DIR
 from PyPDF2 import PdfFileMerger
 import convertapi
-
-
+#
+#
 # def converting2Pdf(manuscriptID):
 #     manuscript = Manuscript.objects.get(id=manuscriptID)
 #
 #     #converting Manuscript to pdf
 #     inputPath = f'{BASE_DIR}/media/{manuscript.manuscript_file}'
-#     fileList = [f'{BASE_DIR}/media/mergedPdfs/{manuscript.manuscript_file}' ]
+#     fileList = [f'{BASE_DIR}/media/mergedPdfs/{manuscript.manuscript_file}']
 #     result = convertapi.convert('pdf', {'File': f'{inputPath}'})
 #     result.file.save(f'{fileList[0]}')
 #
@@ -131,7 +131,7 @@ class AssignedManuscript2Reviewer(viewsets.ModelViewSet):
 #Comment
     def partial_update(self, request, pk=None):
         reviewer = Reviewer.objects.get(user=request.user.id)
-        manu=ManuRev.objects.get(manuscript=request.data['manuscript_id'],reviewer=reviewer.id)
+        manu = ManuRev.objects.get(manuscript=pk, reviewer=reviewer.id)
 
         if manu:
             manu.comment=request.data['comment']

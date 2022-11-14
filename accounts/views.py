@@ -11,6 +11,7 @@ from django.core.mail import send_mail
 
 User = get_user_model()
 
+class UserRegistration(viewsets.ModelViewSet):
 
 class LoginView(TokenObtainPairView):
     serializer_class = MyTokenObtainPairSerializer
