@@ -168,5 +168,5 @@ class AssignedManuscript2Editor(viewsets.ModelViewSet):
         # return Response(serializer.data)
         return Response(serializer.data)
 
-    def
+    # def
 

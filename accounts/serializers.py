@@ -35,7 +35,7 @@ class AuthorProfileSerializer(serializers.HyperlinkedModelSerializer):
 
 class EditorProfileSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
-        model: Editor
+        model= Editor
         fields = ['first_name', 'last_name', 'bio', 'phone', 'address','user_image']
 
 
@@ -47,7 +47,7 @@ class ReviewerProfileSerializer(serializers.HyperlinkedModelSerializer):
 
 class EicProfileSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
-        model: EditorInChief
+        model= EditorInChief
         fields = '__all__'
 
 
