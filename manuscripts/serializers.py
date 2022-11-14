@@ -1,7 +1,7 @@
 from rest_framework import serializers
 from rest_framework.exceptions import *
 
-from manuscripts.models import Manuscript, Figure, ManuRev
+from manuscripts.models import Manuscript, Figure, ManuRev, ManuEditor
 
 
 class ManuscriptSerializer(serializers.ModelSerializer):
@@ -29,3 +29,7 @@ class ManuRevSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
+class ManuEditorSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ManuEditor
+        fields = '__all__'

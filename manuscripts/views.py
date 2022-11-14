@@ -1,8 +1,8 @@
 from rest_framework import permissions, viewsets
 from accounts.models import Author
-from manuscripts.models import Manuscript, Figure, ManuRev
+from manuscripts.models import Manuscript, Figure, ManuRev, ManuEditor
 from accounts.models import *
-from manuscripts.serializers import ManuscriptSerializer, FigureSerializer,ManuRevSerializer
+from manuscripts.serializers import ManuscriptSerializer, FigureSerializer, ManuRevSerializer, ManuEditorSerializer
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.parsers import MultiPartParser, FormParser
@@ -10,32 +10,32 @@ from PIL import Image
 from core.settings import BASE_DIR
 from PyPDF2 import PdfFileMerger
 import convertapi
+
+
 #
-#
-# def converting2Pdf(manuscriptID):
-#     manuscript = Manuscript.objects.get(id=manuscriptID)
-#
-#     #converting Manuscript to pdf
-#     inputPath = f'{BASE_DIR}/media/{manuscript.manuscript_file}'
-#     fileList = [f'{BASE_DIR}/media/mergedPdfs/{manuscript.manuscript_file}']
-#     result = convertapi.convert('pdf', {'File': f'{inputPath}'})
-#     result.file.save(f'{fileList[0]}')
-#
-#     allfiles = Figure.objects.filter(manuscript=manuscriptID)
-#     fileList = []
-#     for file in range(len(allfiles)):
-#         img = Image.open(rf'{BASE_DIR}/media/{file.file}')
-#         filename = file.split('/')
-#         temp = img.convert('RGB')
-#         temp.save(rf'{BASE_DIR}/media/convertedpdfs/{manuscriptID}-{filename[-1]}.pdf')
-#         fileList.append(temp)
-#
-#
-#     merger = PdfFileMerger()
-#     for pdf_file in fileList:
-#         merger.append(pdf_file)
-#
-#     merger.write()
+def converting2Pdf(manuscriptID):
+    manuscript = Manuscript.objects.get(id=manuscriptID)
+
+    # converting Manuscript to pdf
+    inputPath = f'{BASE_DIR}/media/{manuscript.manuscript_file}'
+    fileList = [f'{BASE_DIR}/media/mergedPdfs/{manuscript.manuscript_file}']
+    result = convertapi.convert('pdf', {'File': f'{inputPath}'})
+    result.file.save(f'{fileList[0]}')
+
+    allfiles = Figure.objects.filter(manuscript=manuscriptID)
+    fileList = []
+    for file in range(len(allfiles)):
+        img = Image.open(rf'{BASE_DIR}/media/{file.file}')
+        filename = file.split('/')
+        temp = img.convert('RGB')
+        temp.save(rf'{BASE_DIR}/media/convertedpdfs/{manuscriptID}-{filename[-1]}.pdf')
+        fileList.append(temp)
+
+    merger = PdfFileMerger()
+    for pdf_file in fileList:
+        merger.append(pdf_file)
+
+    merger.write()
 
 
 class ManuscriptViewSet(viewsets.ModelViewSet):
@@ -116,25 +116,26 @@ class AssignedManuscript2Reviewer(viewsets.ModelViewSet):
 
     def list(self, request):
         user_id = request.user.id
-        reviewer=Reviewer.objects.get(user=user_id)
+        reviewer = Reviewer.objects.get(user=user_id)
         ManuRedIDs = ManuRev.objects.filter(reviewer=reviewer.id)
-        manuRecSerialzier=ManuRevSerializer(ManuRedIDs)
+        manuRecSerialzier = ManuRevSerializer(ManuRedIDs)
         manuscripts = []
         for manu in ManuRedIDs:
             manuscripts.append(manu.manuscript)
             if manuscripts[-1].saved == False:
                 manuscripts.pop()
             # manuscripts=Manuscript.objects.filter(id=ManuRedIDs)
-        serializer = ManuscriptSerializer(manuscripts , many=True)
+        serializer = ManuscriptSerializer(manuscripts, many=True)
         # return Response(serializer.data)
         return Response(serializer.data)
-#Comment
+
+    # Comment
     def partial_update(self, request, pk=None):
         reviewer = Reviewer.objects.get(user=request.user.id)
         manu = ManuRev.objects.get(manuscript=pk, reviewer=reviewer.id)
 
         if manu:
-            manu.comment=request.data['comment']
+            manu.comment = request.data['comment']
             manu.save()
             return Response(
                 {
@@ -142,7 +143,30 @@ class AssignedManuscript2Reviewer(viewsets.ModelViewSet):
                 },
                 status=status.HTTP_200_OK)
         return Response({
-            "msg":"Error in Updating Comment"
+            "msg": "Error in Updating Comment"
         },
-        status=status.HTTP_400_BAD_REQUEST
+            status=status.HTTP_400_BAD_REQUEST
         )
+
+
+class AssignedManuscript2Editor(viewsets.ModelViewSet):
+    queryset = ManuEditor.objects.all()
+    serializer_class = ManuEditorSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    def list(self, request):
+        user_id = request.user.id
+        editor = Editor.objects.get(user=user_id)
+        manuEditorID = ManuEditor.objects.filter(editor=editor.id)
+        manuscripts = []
+        for manu in manuEditorID:
+            manuscripts.append(manu.manuscript)
+            if manuscripts[-1].saved == False:
+                manuscripts.pop()
+            # manuscripts=Manuscript.objects.filter(id=ManuRedIDs)
+        serializer = ManuscriptSerializer(manuscripts, many=True)
+        # return Response(serializer.data)
+        return Response(serializer.data)
+
+    def
+
