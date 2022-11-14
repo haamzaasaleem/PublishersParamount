@@ -54,7 +54,7 @@ class Figure(models.Model):
 
 
 class ManuRev(models.Model):
-    manuscript = models.ForeignKey(Manuscript, on_delete=models.CASCADE)
+    manuscript = models.ForeignKey(Manuscript, on_delete=models.CASCADE, null=True, blank=True)
     reviewer = models.ForeignKey(Reviewer, on_delete=models.CASCADE, null=True, blank=True)
     comment = models.CharField(max_length=2000, null=True, blank=True, default='')
 
