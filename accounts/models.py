@@ -4,6 +4,7 @@ from django.dispatch import receiver
 from django.urls import reverse
 from django_rest_passwordreset.signals import reset_password_token_created
 from django.core.mail import send_mail
+from journals.models import Journal
 
 
 @receiver(reset_password_token_created)
@@ -107,6 +108,7 @@ class Editor(BaseProfile):
 class Reviewer(BaseProfile):
     editor = models.ForeignKey(Editor, on_delete=models.CASCADE, null=True)
     keywords = models.CharField(max_length=5000, null=True, blank=True)
+    journal = models.ForeignKey(Journal, on_delete=models.CASCADE, null=True)
 
     def __str__(self):
         return f"{self.user.username} [{self.user.get_role_display()}]"
