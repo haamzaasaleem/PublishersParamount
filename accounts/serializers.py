@@ -24,46 +24,46 @@ class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
 class UserSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = User
-        fields = ['id', 'username', 'email', 'role', 'gender']
+        fields = ['id', 'username', 'email', 'role', 'gender','password']
 
 
-class AuthorProfileSerializer(serializers.HyperlinkedModelSerializer):
+class AuthorProfileSerializer(serializers.ModelSerializer):
     class Meta:
         model = Author
-        fields = ['first_name', 'last_name', 'bio', 'phone', 'address','user_image']
-
-
-class EditorProfileSerializer(serializers.HyperlinkedModelSerializer):
-    class Meta:
-        model= Editor
-        fields = ['first_name', 'last_name', 'bio', 'phone', 'address','user_image']
-
-
-class ReviewerProfileSerializer(serializers.HyperlinkedModelSerializer):
-    class Meta:
-        model = Reviewer
-        fields = ['first_name', 'last_name', 'bio', 'phone', 'address','user_image']
-
-
-class EicProfileSerializer(serializers.HyperlinkedModelSerializer):
-    class Meta:
-        model= EditorInChief
         fields = '__all__'
 
 
-# class UserLoginSerializer(serializers.HyperlinkedModelSerializer):
-#     class Meta:
-#         model=User
-#         fields = ['username', 'password','role']   
+class EditorProfileSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Editor
+        fields = '__all__'
 
 
-# class GroupSerializer(serializers.HyperlinkedModelSerializer):
-#     class Meta:
-#         model = Group
-#         fields = ['url', 'name']
+class ReviewerProfileSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Reviewer
+        fields ='__all__'
 
 
-class ChangePasswordSerializer(serializers.HyperlinkedModelSerializer):
+class EicProfileSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = EditorInChief
+        fields = '__all__'
+
+
+class EicStaffProfileSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = EicStaff
+        fields = '__all__'
+
+
+class EditorStaffProfileSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = EditorStaff
+        fields = '__all__'
+
+
+class ChangePasswordSerializer(serializers.ModelSerializer):
     old_password = serializers.CharField(required=True)
     new_password = serializers.CharField(required=True)
 
@@ -72,7 +72,7 @@ class ChangePasswordSerializer(serializers.HyperlinkedModelSerializer):
         fields = ['old_password', 'new_password']
 
 
-class ResetPasswordSerializer(serializers.HyperlinkedModelSerializer):
+class ResetPasswordSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ['password']

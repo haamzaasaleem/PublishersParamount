@@ -1,3 +1,4 @@
+from django.contrib.auth.hashers import make_password
 from rest_framework import viewsets, permissions, generics
 from rest_framework.permissions import IsAuthenticated
 
@@ -8,8 +9,10 @@ from rest_framework.response import Response
 from rest_framework import status
 from rest_framework_simplejwt.views import TokenObtainPairView
 from django.core.mail import send_mail
+from .models import *
 
 User = get_user_model()
+
 
 # class UserRegistration(viewsets.ModelViewSet):
 
@@ -163,13 +166,15 @@ class ResetPasswordview(viewsets.ModelViewSet):
             )
 
 
-
 class ForgotPasswordView(viewsets.ModelViewSet):
     queryset = User.objects.all()
     serializer_class = UserSerializer
     permission_classes = [permissions.IsAuthenticated]
 
-    def partial_update(self, request, pk=None):
+
+def create(self, request, pk=None):
+    if request.data == 'email':
+
         user = User.objects.get(email=request.data['email'])
 
         if user:
@@ -177,3 +182,56 @@ class ForgotPasswordView(viewsets.ModelViewSet):
                 f'Password Reset URL for USER: #{request.user.username}',
 
             )
+
+
+class UserRegistration(viewsets.ModelViewSet):
+    queryset = User.objects.all().order_by('-date_joined')
+    serializer_class = UserSerializer
+    permission_classes = [permissions.AllowAny]
+
+    def create(self, request):
+
+        user_data = {
+            'email': request.data['email'],
+            'gender': request.data['gender'],
+            # 'password': request.data['password'],
+            'password': make_password(request.data['password']),
+            'username': request.data['username'],
+            'role': request.data['role'],
+        }
+
+        serializer = UserSerializer(data=user_data)
+        if serializer.is_valid():
+            serializer.save()
+            user = User.objects.get(username=user_data['username'])
+            profile_data = {
+                'user': str(user.id),
+                'first_name': request.data['first_name'],
+                'last_name': request.data['last_name'],
+                'bio': request.data['bio'],
+                'phone': request.data['phone'],
+                'address': request.data['address'],
+                # 'user_image': request.data['user_image'],
+
+            }
+            profileSerializer = None
+            if user.role == 'author':
+                profileSerializer = AuthorProfileSerializer(data=profile_data)
+            elif user.role == 'editor':
+                profileSerializer = EditorProfileSerializer(data=profile_data)
+            elif user.role == 'eic':
+                profileSerializer = EicProfileSerializer(data=profile_data)
+            elif user.role == 'reviewer':
+                profileSerializer = ReviewerProfileSerializer(data=profile_data)
+            elif user.role == 'eic_staff':
+                profileSerializer = EicStaffProfileSerializer(data=profile_data)
+            elif user.role == 'e_staff':
+                profileSerializer = EditorStaffProfileSerializer(data=profile_data)
+
+            if profileSerializer.is_valid():
+                profileSerializer.save()
+                return Response(
+                    {"msg": "User Created!"},
+                    status=status.HTTP_201_CREATED)
+            return Response(profileSerializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

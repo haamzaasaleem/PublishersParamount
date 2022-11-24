@@ -15,31 +15,51 @@ import convertapi
 #
 def converting2Pdf(manuscriptID):
     manuscript = Manuscript.objects.get(id=manuscriptID)
-
     # converting Manuscript to pdf
     inputPath = f'{BASE_DIR}/media/{manuscript.manuscript_file}'
-    fileList = [f'{BASE_DIR}/media/mergedPdfs/{manuscript.manuscript_file}']
+    manuscript_path = f'{BASE_DIR}/media/mergedPdfs/{manuscript.manuscript_file}'
+    fileList = [manuscript_path]
+
     result = convertapi.convert('pdf', {'File': f'{inputPath}'})
     result.file.save(f'{fileList[0]}')
+    if manuscript.abstract_file is not None:
+        abstract_path = f'{BASE_DIR}/media/mergedPdfs/{manuscript.abstract_file}'
+        fileList.append(abstract_path)
+        inputPath = f'{BASE_DIR}/media/{manuscript.abstract_file}'
+        result = convertapi.convert('pdf', {'File': f'{inputPath}'})
+        result.file.save(f'{fileList[1]}')
+    if manuscript.cover_file is not None:
+        cover_path = f'{BASE_DIR}/media/mergedPdfs/{manuscript.cover_file}'
+        fileList.append(cover_path)
+        inputPath = f'{BASE_DIR}/media/{manuscript.cover_file}'
+        result = convertapi.convert('pdf', {'File': f'{inputPath}'})
+        result.file.save(f'{fileList[2]}')
+    files_path = ''
+    try:
+        allfiles = Figure.objects.filter(manuscript=manuscriptID)
+        for file in range(len(allfiles)):
+            img = Image.open(rf'{BASE_DIR}/media/{file.file}')
+            filename = file.split('/')
 
-    allfiles = Figure.objects.filter(manuscript=manuscriptID)
-    fileList = []
-    for file in range(len(allfiles)):
-        img = Image.open(rf'{BASE_DIR}/media/{file.file}')
-        filename = file.split('/')
-        temp = img.convert('RGB')
-        temp.save(rf'{BASE_DIR}/media/convertedpdfs/{manuscriptID}-{filename[-1]}.pdf')
-        fileList.append(temp)
+            files_path = rf'{BASE_DIR}/media/convertedpdfs/{manuscriptID}-{filename[-1]}.pdf'
+
+            temp = img.convert('RGB')
+            temp.save(f'{files_path}')
+            fileList.append(files_path)
+    except:
+        pass
 
     merger = PdfFileMerger()
     for pdf_file in fileList:
         merger.append(pdf_file)
 
-    merger.write()
+    mergedPdfPath = f'{BASE_DIR}/media/mergedPDfs/{manuscriptID}.pdf'
+    merger.write(mergedPdfPath)
+    merger.close()
+    return mergedPdfPath
 
 
 class ManuscriptViewSet(viewsets.ModelViewSet):
-    # import pdb; pdb.set_trace()
     queryset = Manuscript.objects.all()
     serializer_class = ManuscriptSerializer
     permission_classes = [permissions.IsAuthenticated]
@@ -74,6 +94,12 @@ class ManuscriptViewSet(viewsets.ModelViewSet):
                 figure = FigureSerializer(data=file)
                 if figure.is_valid():
                     figure.save()
+
+                    mergedPdfPath = converting2Pdf(manuscript.id)
+
+                    return Response({"msg": "Manuscript Created!",
+                                     "MergedPDF": mergedPdfPath
+                                     }, status=status.HTTP_201_CREATED)
                 else:
                     return Response(figure.errors, status=status.HTTP_400_BAD_REQUEST)
 
@@ -169,4 +195,3 @@ class AssignedManuscript2Editor(viewsets.ModelViewSet):
         return Response(serializer.data)
 
     # def
-

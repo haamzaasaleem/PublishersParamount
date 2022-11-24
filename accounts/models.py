@@ -63,6 +63,9 @@ class User(AbstractUser):
     def __str__(self):
         return f"{self.username} [{self.get_role_display()}]"
 
+class ForgetPassword(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    token = models.CharField(max_length=200)
 
 class BaseProfile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
