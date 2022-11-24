@@ -68,7 +68,7 @@ class ManuscriptViewSet(viewsets.ModelViewSet):
     def list(self, request):
         user = request.user.id
         author = Author.objects.get(user_id=user)
-
+        ##
         manuscript = Manuscript.objects.filter(author_id=author.id)
         serializer = ManuscriptSerializer(manuscript, many=True)
         return Response(serializer.data)
