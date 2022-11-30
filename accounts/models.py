@@ -63,13 +63,16 @@ class User(AbstractUser):
     def __str__(self):
         return f"{self.username} [{self.get_role_display()}]"
 
+
 class ForgetPassword(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     token = models.CharField(max_length=200)
 
+
 class BaseProfile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
-    user_image = models.ImageField(upload_to='user_image/', null=True, blank=True, default='/user_image/placeholder.jpeg')
+    user_image = models.ImageField(upload_to='user_image/', null=True, blank=True,
+                                   default='/user_image/placeholder.jpeg')
     first_name = models.CharField(max_length=50, null=True, blank=True)
     last_name = models.CharField(max_length=50, null=True, blank=True)
     bio = models.TextField(null=True, blank=True)
@@ -112,6 +115,8 @@ class Reviewer(BaseProfile):
     editor = models.ForeignKey(Editor, on_delete=models.CASCADE, null=True)
     keywords = models.CharField(max_length=5000, null=True, blank=True)
     journal = models.ForeignKey(Journal, on_delete=models.CASCADE, null=True)
+    education = models.CharField(max_length=5000, null=True, blank=True)
+    cv = models.FileField(upload_to='cv/', null=True, blank=True)
 
     def __str__(self):
         return f"{self.user.username} [{self.user.get_role_display()}]"
@@ -129,4 +134,3 @@ class EditorStaff(BaseProfile):
 
     def __str__(self):
         return f"{self.user.username} [{self.user.get_role_display()}]"
-
