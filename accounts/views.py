@@ -11,6 +11,8 @@ from rest_framework_simplejwt.views import TokenObtainPairView
 from django.core.mail import send_mail
 from .models import *
 
+from rest_framework.decorators import api_view, permission_classes
+
 User = get_user_model()
 
 
@@ -98,41 +100,6 @@ class UserViewSet(viewsets.ModelViewSet):
         instance.save()
 
 
-class ChangePasswordView(generics.UpdateAPIView):
-    """
-    An endpoint for changing password.
-    """
-    serializer_class = ChangePasswordSerializer
-    model = User
-    permission_classes = [IsAuthenticated]
-
-    def get_object(self, queryset=None):
-        obj = self.request.user
-        return obj
-
-    def update(self, request, *args, **kwargs):
-        self.object = self.get_object()
-        serializer = self.get_serializer(data=request.data)
-
-        if serializer.is_valid():
-            # Check old password
-            if not self.object.check_password(request.data['old_password']):
-                return Response({"old_password": ["Wrong password."]}, status=status.HTTP_400_BAD_REQUEST)
-            # set_password also hashes the password that the user will get
-            self.object.set_password(request.data['new_password'])
-            self.object.save()
-            response = {
-                'status': 'success',
-                'code': status.HTTP_200_OK,
-                'message': 'Password updated successfully',
-                'data': []
-            }
-
-            return Response(response)
-
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-
 class ResetPasswordview(viewsets.ModelViewSet):
     queryset = User.objects.all()
     serializer_class = ResetPasswordSerializer
@@ -166,22 +133,51 @@ class ResetPasswordview(viewsets.ModelViewSet):
             )
 
 
-class ForgotPasswordView(viewsets.ModelViewSet):
-    queryset = User.objects.all()
-    serializer_class = UserSerializer
-    permission_classes = [permissions.IsAuthenticated]
-
-
-def create(self, request, pk=None):
-    if request.data == 'email':
-
-        user = User.objects.get(email=request.data['email'])
+@api_view(['POST'])
+@permission_classes((permissions.AllowAny,))
+def forgotPasswordView(request, token=None):
+    import pdb
+    pdb.set_trace()
+    if request.method == 'POST':
+        if request.data['data'].find('@'):
+            user = User.objects.get(email=request.data['data'])
+        else:
+            user = User.objects.get(username=request.data['data'])
 
         if user:
-            send_mail(
-                f'Password Reset URL for USER: #{request.user.username}',
+            send_mail(f'Password Reset URL for USER: #{request.user.username}',)
+            return Response({
+                "msg":"Reset link Sent!!!!"
+            })
 
-            )
+
+
+        # if request.data == 'email':
+        #     user = User.objects.get(email=request.data['email'])
+        #
+        #     if user:
+        #         send_mail(
+        #             f'Password Reset URL for USER: #{request.user.username}',
+        #
+        #         )
+
+
+#
+# class ForgotPasswordView(viewsets.ModelViewSet):
+#     queryset = ForgetPassword.objects.all()
+#     serializer_class = ForgotPasswordSerializer
+#     permission_classes = [permissions.AllowAny]
+# def create(self, request, token=None):
+#     import pdb
+#     pdb.set_trace()
+#     if request.data == 'email':
+#         user = User.objects.get(email=request.data['email'])
+#
+#         if user:
+#             send_mail(
+#                 f'Password Reset URL for USER: #{request.user.username}',
+#
+#             )
 
 
 class UserRegistration(viewsets.ModelViewSet):
@@ -212,7 +208,6 @@ class UserRegistration(viewsets.ModelViewSet):
                 'phone': request.data['phone'],
                 'address': request.data['address'],
                 # 'user_image': request.data['user_image'],
-
             }
             profileSerializer = None
             if user.role == 'author':

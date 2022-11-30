@@ -59,6 +59,7 @@ def converting2Pdf(manuscriptID):
     return mergedPdfPath
 
 
+##Creating Manuscript
 class ManuscriptViewSet(viewsets.ModelViewSet):
     queryset = Manuscript.objects.all()
     serializer_class = ManuscriptSerializer
@@ -118,6 +119,7 @@ class ManuscriptViewSet(viewsets.ModelViewSet):
             )
 
 
+# Saving Manuscript by Author
 class SaveManuscriptView(viewsets.ModelViewSet):
     queryset = Manuscript.objects.all()
     serializer_class = ManuscriptSerializer
