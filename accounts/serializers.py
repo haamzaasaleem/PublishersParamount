@@ -42,7 +42,7 @@ class EditorProfileSerializer(serializers.ModelSerializer):
 class ReviewerProfileSerializer(serializers.ModelSerializer):
     class Meta:
         model = Reviewer
-        fields = '__all__'
+        fields ='__all__'
 
 
 class EicProfileSerializer(serializers.ModelSerializer):
