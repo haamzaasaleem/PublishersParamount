@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     'corsheaders',
     'emailer',
     'django_rest_passwordreset',
+    'django_extensions',
 ]
 
 MIDDLEWARE = [
@@ -196,10 +197,24 @@ SIMPLE_JWT = {
     'SLIDING_TOKEN_REFRESH_LIFETIME': timedelta(days=1),
 }
 
-EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_HOST = 'smtp.gmail.com'
-EMAIL_HOST_USER = 'etest823@gmail.com'
-EMAIL_HOST_PASSWORD = 'mclisrohyyxaqozm'
-EMAIL_PORT = 587
-EMAIL_USE_TLS = True
+# EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+# EMAIL_HOST = 'smtp.gmail.com'
+# EMAIL_HOST_USER = 'etest823@gmail.com'
+# EMAIL_HOST_PASSWORD = 'mclisrohyyxaqozm'
+# EMAIL_PORT = 587
+# EMAIL_USE_TLS = True
 # EMAIL_HOST_PASSWORD = "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"
+
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+# EMAIL_BACKEND = 'smtp.sendgrid.net'
+
+EMAIL_HOST = 'smtp.sendgrid.net'
+EMAIL_PORT = 587
+EMAIL_HOST_USER = 'apikey'
+EMAIL_HOST_PASSWORD = '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'
+
+
+GRAPH_MODELS ={
+    'all_applications': True,
+    'graph_models': True,
+     }

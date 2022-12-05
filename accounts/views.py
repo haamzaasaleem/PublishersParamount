@@ -12,6 +12,11 @@ from django.core.mail import send_mail
 from .models import *
 
 from rest_framework.decorators import api_view, permission_classes
+# Email Setup
+from django.core.mail import EmailMultiAlternatives
+from django.template.loader import render_to_string
+from django.utils.html import strip_tags
+import uuid
 
 User = get_user_model()
 
@@ -133,33 +138,58 @@ class ResetPasswordview(viewsets.ModelViewSet):
             )
 
 
-@api_view(['POST'])
+@api_view(['POST', 'GET'])
 @permission_classes((permissions.AllowAny,))
 def forgotPasswordView(request, token=None):
-    import pdb
-    pdb.set_trace()
     if request.method == 'POST':
         if request.data['data'].find('@'):
-            user = User.objects.get(email=request.data['data'])
+            try:
+                user = User.objects.get(email=request.data['data'])
+            except:
+                user = None
         else:
-            user = User.objects.get(username=request.data['data'])
+            try:
+                user = User.objects.get(username=request.data['data'])
+            except:
+                user = None
 
-        if user:
-            send_mail(f'Password Reset URL for USER: #{request.user.username}',)
-            return Response({
-                "msg":"Reset link Sent!!!!"
-            })
+        if user is not None:
+            import pdb;
+            pdb.set_trace()
+            uuidToken = str(uuid.uuid4().hex)
+            data = {
+                "user": user.id,
+                "token": uuidToken
+            }
+            serializer = ForgotPasswordSerializer(data=data)
+            if serializer.is_valid():
+                serializer.save()
+                html_content = render_to_string("ForgotPasswordEmailtemplate.html",
+                                                {'title': f'{user.username}', 'link': f'http://127.0.0.1:8000/{uuidToken}/'})
+
+                text_content = strip_tags(html_content)
+                email = EmailMultiAlternatives(
+                    f'Password Reset Email - {user.username}',
+                    text_content,
+                    'haamzaasaleem@gmail.com',
+                    [f"{request.data['data']}"]
+                )
+                email.attach_alternative(html_content, "text/html")
+                email.send()
+                return Response({"msg": "Email Sent!!"}, status=status.HTTP_200_OK)
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        return Response({"msg": "User not Found"})
+
+    if request.method == 'GET':
+       try:
+        dbToken=ForgetPassword.objects.get(token=token)
+       except:
+           return Response({"msg": "Invalid Token"},status=status.HTTP_400_BAD_REQUEST)
 
 
 
-        # if request.data == 'email':
-        #     user = User.objects.get(email=request.data['email'])
-        #
-        #     if user:
-        #         send_mail(
-        #             f'Password Reset URL for USER: #{request.user.username}',
-        #
-        #         )
+
+
 
 
 #
