@@ -111,6 +111,8 @@ class ResetPasswordview(viewsets.ModelViewSet):
     permission_classes = [permissions.IsAuthenticated]
 
     def partial_update(self, request, pk=None):
+        # import pdb
+        # pdb.set_trace()
         user = User.objects.get(id=request.user.id)
         if request.data['newPassword'] == request.data['confirmPassword']:
             if request.data['currPassword'] != request.data['newPassword']:

@@ -1,12 +1,13 @@
 from django.db import models
 
 
-
 class Subject(models.Model):
     title = models.CharField(max_length=100)
 
     def __str__(self):
         return self.title
+
+
 class Journal(models.Model):
     title = models.CharField(max_length=100)
     issn_online = models.CharField(max_length=100, default=None)
@@ -25,8 +26,3 @@ class Journal(models.Model):
 
     def get_editor_in_chief(self):
         return self.editorinchief
-
-
-
-
-
