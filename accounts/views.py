@@ -108,8 +108,7 @@ class ResetPasswordview(viewsets.ModelViewSet):
     permission_classes = [permissions.IsAuthenticated]
 
     def partial_update(self, request, pk=None):
-        # import pdb
-        # pdb.set_trace()
+
         user = User.objects.get(id=request.user.id)
         if request.data['newPassword'] == request.data['confirmPassword']:
             if request.data['currPassword'] != request.data['newPassword']:
@@ -184,8 +183,7 @@ class UserRegistration(viewsets.ModelViewSet):
     permission_classes = [permissions.AllowAny]
 
     def create(self, request):
-        import pdb;
-        pdb.set_trace()
+
         user_data = {
             'email': request.data['email'],
             'gender': request.data['gender'],
@@ -224,7 +222,7 @@ class UserRegistration(viewsets.ModelViewSet):
 
             if profileSerializer.is_valid():
                 profileSerializer.save()
-                userRegistrationMailer(user_data, profile_data)
+                # userRegistrationMailer(user_data, profile_data)
                 return Response(
                     {"msg": "User Created!"},
                     status=status.HTTP_201_CREATED)
@@ -233,8 +231,8 @@ class UserRegistration(viewsets.ModelViewSet):
 
 
 @api_view(['GET'])
-@permission_classes((permissions.AllowAny,))
+@permission_classes([permissions.AllowAny])
 def JournalBasedReviewer(request, pk=None):
     reviewer = Reviewer.objects.filter(journal=pk)
-    serializer = ReviewerProfileSerializer(reviewer,many=True)
+    serializer = ReviewerProfileSerializer(reviewer, many=True)
     return Response(serializer.data, status=status.HTTP_200_OK)
