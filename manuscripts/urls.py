@@ -13,5 +13,5 @@ urlpatterns = [
     path('manuscript/', include(router.urls)),
     path('manuscript/', include(router.urls)),
     path('manuscript/', include(router.urls)),
-    path('manuscript/saved-manuscripts/', savedManuscript, name='saved-manuscripts'),
+    path('manuscript/saved-manuscripts/<int:pk>/', savedManuscript, name='saved-manuscripts'),
 ]
