@@ -206,8 +206,8 @@ class AssignedManuscript2Editor(viewsets.ModelViewSet):
 @api_view(['GET'])
 @permission_classes((permissions.AllowAny,))
 def savedManuscript(request, pk=None):
-    manuscripts = Manuscript.objects.filter(journal=pk)
-    manuscripts = manuscripts.objects.filter(saved=True)
+    manuscripts = Manuscript.objects.filter(journal=pk,saved=True)
+
     serializer = ManuscriptSerializer(manuscripts, many=True)
     return Response(serializer.data, status=status.HTTP_200_OK)
 
