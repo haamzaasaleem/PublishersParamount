@@ -152,7 +152,7 @@ class AssignedManuscript2Reviewer(viewsets.ModelViewSet):
         user_id = request.user.id
         reviewer = Reviewer.objects.get(user=user_id)
         ManuRedIDs = ManuRev.objects.filter(reviewer=reviewer.id)
-        manuRecSerialzier = ManuRevSerializer(ManuRedIDs)
+        manuRecSerialzier = ManuRevSerializer(ManuRedIDs, many=True)
         manuscripts = []
         for manu in ManuRedIDs:
             manuscripts.append(manu.manuscript)
