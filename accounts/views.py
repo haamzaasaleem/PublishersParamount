@@ -12,11 +12,8 @@ from django.core.mail import send_mail
 from .models import *
 
 from rest_framework.decorators import api_view, permission_classes
-# Email Setup
-from django.core.mail import EmailMultiAlternatives
-from django.template.loader import render_to_string
-from django.utils.html import strip_tags
 import uuid
+from .mailer import *
 
 User = get_user_model()
 
@@ -120,6 +117,7 @@ class ResetPasswordview(viewsets.ModelViewSet):
                 if user.check_password(request.data['currPassword']):
                     user.set_password(request.data['newPassword'])
                     user.save()
+                    resetAuthPasswordMailer(user)
                     return Response(
                         {"msg": "Password Updated Successfully"},
                         status=status.HTTP_200_OK
@@ -156,8 +154,6 @@ def forgotPasswordView(request, token=None):
                 user = None
 
         if user is not None:
-            import pdb;
-            pdb.set_trace()
             uuidToken = str(uuid.uuid4().hex)
             data = {
                 "user": user.id,
@@ -166,51 +162,20 @@ def forgotPasswordView(request, token=None):
             serializer = ForgotPasswordSerializer(data=data)
             if serializer.is_valid():
                 serializer.save()
-                html_content = render_to_string("ForgotPasswordEmailtemplate.html",
-                                                {'title': f'{user.username}', 'link': f'http://127.0.0.1:8000/{uuidToken}/'})
-
-                text_content = strip_tags(html_content)
-                email = EmailMultiAlternatives(
-                    f'Password Reset Email - {user.username}',
-                    text_content,
-                    'haamzaasaleem@gmail.com',
-                    [f"{request.data['data']}"]
-                )
-                email.attach_alternative(html_content, "text/html")
-                email.send()
-                return Response({"msg": "Email Sent!!"}, status=status.HTTP_200_OK)
+                isSent = resetPasswordMailer(user, request.data['data'])
+                if isSent:
+                    return Response({"msg": "Email Sent!!",
+                                     "data": serializer.data},
+                                    status=status.HTTP_200_OK
+                                    )
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         return Response({"msg": "User not Found"})
 
     if request.method == 'GET':
-       try:
-        dbToken=ForgetPassword.objects.get(token=token)
-       except:
-           return Response({"msg": "Invalid Token"},status=status.HTTP_400_BAD_REQUEST)
-
-
-
-
-
-
-
-#
-# class ForgotPasswordView(viewsets.ModelViewSet):
-#     queryset = ForgetPassword.objects.all()
-#     serializer_class = ForgotPasswordSerializer
-#     permission_classes = [permissions.AllowAny]
-# def create(self, request, token=None):
-#     import pdb
-#     pdb.set_trace()
-#     if request.data == 'email':
-#         user = User.objects.get(email=request.data['email'])
-#
-#         if user:
-#             send_mail(
-#                 f'Password Reset URL for USER: #{request.user.username}',
-#
-#             )
-
+        try:
+            dbToken = ForgetPassword.objects.get(token=token)
+        except:
+            return Response({"msg": "Invalid Token"}, status=status.HTTP_400_BAD_REQUEST)
 
 class UserRegistration(viewsets.ModelViewSet):
     queryset = User.objects.all().order_by('-date_joined')
@@ -257,6 +222,7 @@ class UserRegistration(viewsets.ModelViewSet):
 
             if profileSerializer.is_valid():
                 profileSerializer.save()
+                userRegistrationMailer(user_data, profile_data)
                 return Response(
                     {"msg": "User Created!"},
                     status=status.HTTP_201_CREATED)

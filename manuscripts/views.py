@@ -1,8 +1,9 @@
 from rest_framework import permissions, viewsets
 from accounts.models import Author
-from manuscripts.models import Manuscript, Figure, ManuRev, ManuEditor
+from manuscripts.mailer import *
+from manuscripts.models import *
 from accounts.models import *
-from manuscripts.serializers import ManuscriptSerializer, FigureSerializer, ManuRevSerializer, ManuEditorSerializer
+from manuscripts.serializers import *
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.parsers import MultiPartParser, FormParser
@@ -70,40 +71,44 @@ class ManuscriptViewSet(viewsets.ModelViewSet):
         user = request.user.id
         author = Author.objects.get(user_id=user)
         manuscript = Manuscript.objects.filter(author_id=author.id)
+        journal
         serializer = ManuscriptSerializer(manuscript, many=True)
         return Response(serializer.data)
 
     def create(self, request):
+        import pdb;
+        pdb.set_trace()
+        author = Author.objects.get(user_id=request.user.id)
+        manuscript_data = {
+            "journal": request.data['journal_id'],
+            "title": request.data['title'],
+            "abstract": request.data['abstract'],
+            "keywords": request.data['keywords'],
+            "article_type": request.data['article_type'],
+            "article_file": request.data['article_file'],
+            "cover_letter": request.data['cover_letter'],
+            "author": author.id
+        }
 
-        author = Author.objects.get(user_id=request.data['author'])
+        serializer = ManuscriptSerializer(data=manuscript_data)
 
-        request.data['author'] = author.id
-
-        serializer = ManuscriptSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
 
             manuscript = Manuscript.objects.get(title=request.data['title'])
-
-            for figure in range(len(request.data['figure_files'])):
-                file = {
-                    'file': figure,
-                    'manuscript': manuscript.id
-                }
-
-                figure = FigureSerializer(data=file)
-                if figure.is_valid():
-                    figure.save()
-
-                    mergedPdfPath = converting2Pdf(manuscript.id)
-
-                    return Response({"msg": "Manuscript Created!",
-                                     "MergedPDF": mergedPdfPath
-                                     }, status=status.HTTP_201_CREATED)
-                else:
-                    return Response(figure.errors, status=status.HTTP_400_BAD_REQUEST)
-
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
+            coAuthor_data = {
+                "name": request.data['coAuthor_name'],
+                "email": request.data['coAuthor_email'],
+                "manuscript": manuscript.id,
+            }
+            coAuthor_serializer = CoAuthorSerializer(data=coAuthor_data)
+            if coAuthor_serializer.is_valid():
+                coAuthor_serializer.save()
+                return Response({
+                    "msg": "Manuscript added",
+                    "data": coAuthor_serializer.data | serializer.data
+                }, status=status.HTTP_201_CREATED)
+            return Response(coAuthor_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def partial_update(self, request, pk):
@@ -130,6 +135,8 @@ class SaveManuscriptView(viewsets.ModelViewSet):
         manuscript = Manuscript.objects.get(id=manuscript_id)
         manuscript.saved = True
         manuscript.save()
+        SaveManuscriptMailer(manuscript, manuscript.author)
+
         return Response(
             {'msg': 'uploaded'},
             status=status.HTTP_200_OK

@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{title}}</title>
+    <style>
+        * {
+            padding: 0;
+            margin: 0;
+            font-family: sans-serif;
+            box-sizing: border-box;
+        }
+
+        .email-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            gap: 30px;
+            padding: 50px 100px;
+        }
+
+        .email-container p {
+            text-align: justify;
+        }
+
+        .btn {
+            border-radius: 30px;
+            background-color: #3d925e;
+            border: none;
+            color: rgb(231, 231, 231);
+            cursor: pointer;
+            padding: 12px 24px;
+            font-weight: bold;
+            transition: 0.3s;
+            font-size: 16px;
+        }
+
+        .allow-reject-btns-container {
+            display: flex;
+            gap: 12px;
+        }
+
+        @media all and (max-width: 768px) {
+            .email-container {
+                padding: 50px 150px;
+            }
+        }
+
+        @media all and (max-width: 425px) {
+            .email-container {
+                padding: 50px 70px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="email-container" style="flex-direction: column !important;">
+<!--        <img src="logo.png" alt="logo"><-->
+        <h1>{{title}}</h1>
+        <p>Your Manuscript has successfully Submitted Please wait for the board to review your Article.
+        </p>
+
+
+        <div class="allow-reject-btns-container">
+            <button class="btn"><a href="#"> Login </a></button>
+        </div>
+    </div>
+</body>
+
+</html>

@@ -3,10 +3,12 @@ from django.db import models
 
 class Subject(models.Model):
     title = models.CharField(max_length=100)
+    desc = models.CharField(max_length=2000, default='')
+    image = models.ImageField(upload_to='subject_image/', null=True, blank=True)
+    # journal = models.ForeignKey(Journal, on_delete=models.CASCADE, null=True, blank=True)
 
     def __str__(self):
         return self.title
-
 
 class Journal(models.Model):
     title = models.CharField(max_length=100)
@@ -26,3 +28,6 @@ class Journal(models.Model):
 
     def get_editor_in_chief(self):
         return self.editorinchief
+
+
+
