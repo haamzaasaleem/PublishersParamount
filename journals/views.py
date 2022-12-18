@@ -7,9 +7,7 @@ from rest_framework.decorators import api_view, authentication_classes, permissi
 
 
 class JournalViewSet(viewsets.ModelViewSet):
-    """
-    API endpoint that allows journals to be viewed or edited.
-    """
+
     queryset = Journal.objects.all()
     serializer_class = JournalSerializer
     permission_classes = [permissions.IsAuthenticatedOrReadOnly]

@@ -183,7 +183,7 @@ class UserRegistration(viewsets.ModelViewSet):
     permission_classes = [permissions.AllowAny]
 
     def create(self, request):
-
+        import pdb;pdb.set_trace()
         user_data = {
             'email': request.data['email'],
             'gender': request.data['gender'],

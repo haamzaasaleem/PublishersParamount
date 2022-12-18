@@ -71,7 +71,6 @@ class ManuscriptViewSet(viewsets.ModelViewSet):
         user = request.user.id
         author = Author.objects.get(user_id=user)
         manuscript = Manuscript.objects.filter(author_id=author.id)
-        journal
         serializer = ManuscriptSerializer(manuscript, many=True)
         return Response(serializer.data)
 
