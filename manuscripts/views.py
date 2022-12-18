@@ -1,4 +1,6 @@
 from rest_framework import permissions, viewsets
+from rest_framework.decorators import api_view, permission_classes
+
 from accounts.models import Author
 from manuscripts.mailer import *
 from manuscripts.models import *
@@ -75,8 +77,7 @@ class ManuscriptViewSet(viewsets.ModelViewSet):
         return Response(serializer.data)
 
     def create(self, request):
-        import pdb;
-        pdb.set_trace()
+
         author = Author.objects.get(user_id=request.user.id)
         manuscript_data = {
             "journal": request.data['journal_id'],
@@ -202,3 +203,13 @@ class AssignedManuscript2Editor(viewsets.ModelViewSet):
         return Response(serializer.data)
 
     # def
+
+
+@api_view(['GET'])
+@permission_classes((permissions.AllowAny,))
+def savedManuscript(request, pk=None):
+    import pdb
+    pdb.set_trace()
+    manuscripts = Manuscript.objects.filter(saved=True)
+    serializer = ManuscriptSerializer(manuscripts,many=True)
+    return Response(serializer.data, status=status.HTTP_200_OK)
