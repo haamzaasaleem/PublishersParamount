@@ -89,7 +89,7 @@ class EditorInChief(BaseProfile):
 
 
 class Editor(BaseProfile):
-    eic = models.OneToOneField(EditorInChief, on_delete=models.CASCADE, null=True, blank=True)
+    # eic = models.OneToOneField(EditorInChief, on_delete=models.CASCADE, null=True, blank=True)
     journal = models.ForeignKey(Journal, on_delete=models.CASCADE, null=True)
 
     def __str__(self):
