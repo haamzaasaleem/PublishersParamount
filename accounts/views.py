@@ -236,3 +236,11 @@ def JournalBasedReviewer(request, pk=None):
     reviewer = Reviewer.objects.filter(journal=pk)
     serializer = ReviewerProfileSerializer(reviewer, many=True)
     return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+@api_view(['GET'])
+@permission_classes([permissions.AllowAny])
+def JournalBasedEditors(request, pk=None):
+    editor = Editor.objects.filter(journal=pk)
+    serializer = EditorProfileSerializer(editor, many=True)
+    return Response(serializer.data, status=status.HTTP_200_OK)

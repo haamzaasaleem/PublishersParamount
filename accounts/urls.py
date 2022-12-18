@@ -11,6 +11,7 @@ router.register(r'password-reset', ResetPasswordview)
 urlpatterns = [
     path('accounts/', include(router.urls)),
     path('accounts/journal-based-reviewers/<int:pk>/', JournalBasedReviewer, name='journal-based-reviewers'),
+    path('accounts/journal-based-editors/<int:pk>/', JournalBasedEditors, name='journal-based-editors'),
     path('forget-password/<str:token>', forgotPasswordView),
 
 ]
