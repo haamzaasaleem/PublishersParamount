@@ -201,14 +201,11 @@ class AssignedManuscript2Editor(viewsets.ModelViewSet):
         # return Response(serializer.data)
         return Response(serializer.data)
 
-    # def
-
 
 @api_view(['GET'])
 @permission_classes((permissions.AllowAny,))
 def savedManuscript(request, pk=None):
-    import pdb
-    pdb.set_trace()
-    manuscripts = Manuscript.objects.filter(saved=True)
-    serializer = ManuscriptSerializer(manuscripts,many=True)
+    manuscripts = Manuscript.objects.filter(journal=pk)
+    manuscripts = manuscripts.objects.filter(saved=True)
+    serializer = ManuscriptSerializer(manuscripts, many=True)
     return Response(serializer.data, status=status.HTTP_200_OK)
