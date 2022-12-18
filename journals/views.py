@@ -28,3 +28,5 @@ def SubjectWiseJournalAPI(self, pk=None):
         return Response(serializer.data, status=status.HTTP_200_OK)
     except:
         return Response({"msg": "No Journal Found Under this Subject"})
+
+

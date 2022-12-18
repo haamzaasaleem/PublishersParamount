@@ -13,6 +13,7 @@ from PIL import Image
 from core.settings import BASE_DIR
 from PyPDF2 import PdfFileMerger
 import convertapi
+from accounts.serializers import *
 
 
 #
@@ -209,3 +210,5 @@ def savedManuscript(request, pk=None):
     manuscripts = manuscripts.objects.filter(saved=True)
     serializer = ManuscriptSerializer(manuscripts, many=True)
     return Response(serializer.data, status=status.HTTP_200_OK)
+
+

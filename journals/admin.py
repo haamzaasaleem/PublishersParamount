@@ -2,8 +2,11 @@ from django.contrib import admin
 
 from journals.models import *
 
+
 # Register your models here.
-admin.site.register(Journal)
+@admin.register(Journal)
+class SubjectAdmin(admin.ModelAdmin):
+    list_display = ['id', 'title']
 
 
 # admin.site.register(Subject)

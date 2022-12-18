@@ -177,13 +177,15 @@ def forgotPasswordView(request, token=None):
         except:
             return Response({"msg": "Invalid Token"}, status=status.HTTP_400_BAD_REQUEST)
 
+
 class UserRegistration(viewsets.ModelViewSet):
     queryset = User.objects.all().order_by('-date_joined')
     serializer_class = UserSerializer
     permission_classes = [permissions.AllowAny]
 
     def create(self, request):
-        import pdb;pdb.set_trace()
+        import pdb;
+        pdb.set_trace()
         user_data = {
             'email': request.data['email'],
             'gender': request.data['gender'],
@@ -228,3 +230,13 @@ class UserRegistration(viewsets.ModelViewSet):
                     status=status.HTTP_201_CREATED)
             return Response(profileSerializer.errors, status=status.HTTP_400_BAD_REQUEST)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+@api_view(['GET'])
+@permission_classes((permissions.AllowAny,))
+def JournalBasedReviewer(request, pk=None):
+    import pdb
+    pdb.set_trace()
+    reviewer = Reviewer.objects.filter(journal=pk)
+    serializer = ReviewerProfileSerializer(reviewer,many=True)
+    return Response(serializer.data, status=status.HTTP_200_OK)

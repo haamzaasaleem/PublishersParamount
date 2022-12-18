@@ -24,7 +24,7 @@ class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
 class UserSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = User
-        fields = ['id', 'username', 'email', 'role', 'gender','password']
+        fields = '__all__'
 
 
 class AuthorProfileSerializer(serializers.ModelSerializer):
