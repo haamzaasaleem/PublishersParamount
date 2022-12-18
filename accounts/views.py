@@ -241,6 +241,7 @@ def JournalBasedReviewer(request, pk=None):
 @api_view(['GET'])
 @permission_classes([permissions.AllowAny])
 def JournalBasedEditors(request, pk=None):
+    import pdb;pdb.set_trace()
     editor = Editor.objects.filter(journal=pk)
     serializer = EditorProfileSerializer(editor, many=True)
     return Response(serializer.data, status=status.HTTP_200_OK)
