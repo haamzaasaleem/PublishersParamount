@@ -135,7 +135,7 @@ class SaveManuscriptView(viewsets.ModelViewSet):
         manuscript = Manuscript.objects.get(id=manuscript_id)
         manuscript.saved = True
         manuscript.save()
-        SaveManuscriptMailer(manuscript, manuscript.author)
+        # SaveManuscriptMailer(manuscript, manuscript.author)
 
         return Response(
             {'msg': 'uploaded'},
