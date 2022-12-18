@@ -203,12 +203,20 @@ class AssignedManuscript2Editor(viewsets.ModelViewSet):
         return Response(serializer.data)
 
 
+@api_view(['POST'])
+@permission_classes((permissions.AllowAny,))
+def AssignManuscriptToEditor(request):
+    serializer = ManuEditorSerializer(data=request.data)
+    if serializer.is_valid():
+        serializer.save()
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
 @api_view(['GET'])
 @permission_classes((permissions.AllowAny,))
 def savedManuscript(request, pk=None):
-    manuscripts = Manuscript.objects.filter(journal=pk,saved=True)
+    manuscripts = Manuscript.objects.filter(journal=pk, saved=True)
 
     serializer = ManuscriptSerializer(manuscripts, many=True)
     return Response(serializer.data, status=status.HTTP_200_OK)
-
-
