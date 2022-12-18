@@ -77,7 +77,7 @@ class ManuscriptViewSet(viewsets.ModelViewSet):
         return Response(serializer.data)
 
     def create(self, request):
-
+        import pdb;pdb.set_trace()
         author = Author.objects.get(user_id=request.user.id)
         manuscript_data = {
             "journal": request.data['journal_id'],
@@ -85,8 +85,8 @@ class ManuscriptViewSet(viewsets.ModelViewSet):
             "abstract": request.data['abstract'],
             "keywords": request.data['keywords'],
             "article_type": request.data['article_type'],
-            "article_file": request.data['article_file'],
-            "cover_letter": request.data['cover_letter'],
+            "manuscript_file": request.data['article_file'],
+            "cover_file": request.data['cover_letter'],
             "author": author.id
         }
 
