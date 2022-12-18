@@ -220,3 +220,15 @@ def savedManuscript(request, pk=None):
 
     serializer = ManuscriptSerializer(manuscripts, many=True)
     return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+@api_view(['GET'])
+@permission_classes(permissions.AllowAny)
+def sendAssignedReviewers(request, pk=None):
+    try:
+        asignRev = ManuRev.objects.filter(manuscript=pk)
+        serializer = AssignedManuscript2Reviewer(asignRev, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    except:
+        asignRev = None
+        return Response({'asignRev': None}, status=status.HTTP_200_OK)

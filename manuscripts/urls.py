@@ -12,4 +12,5 @@ urlpatterns = [
     path('manuscript/', include(router.urls)),
     path('manuscript/assigned_manuscript_editor/', AssignManuscriptToEditor,name='assigned_manuscript_editor'),
     path('manuscript/saved-manuscripts/<int:pk>/', savedManuscript, name='saved-manuscripts'),
+    path('manuscript/send-assigned-manuscripts/<int:pk>/', sendAssignedReviewers, name='send-assigned-manuscript'),
 ]
