@@ -92,6 +92,7 @@ class Editor(BaseProfile):
     # eic = models.OneToOneField(EditorInChief, on_delete=models.CASCADE, null=True, blank=True)
     journal = models.ForeignKey(Journal, on_delete=models.CASCADE, null=True)
 
+
     def __str__(self):
         return f"{self.user.username} [{self.user.get_role_display()}]"
 
