@@ -271,3 +271,17 @@ def listApprovedArticles(request):
         return Response(serializer.data, status=status.HTTP_200_OK)
     except:
         return Response({'msg': "No Manuscript is Published Yet"}, status=status.HTTP_204_NO_CONTENT)
+
+
+
+@api_view(['GET'])
+@permission_classes([permissions.AllowAny])
+def listApprovedJournalArticles(request,pk):
+    try:
+        manuscripts = Manuscript.objects.filter(status='approved', journal=pk)
+
+        serializer = ManuscriptSerializer(manuscripts, many=True)
+
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    except:
+        return Response({'msg': "No Manuscript is Published Yet"}, status=status.HTTP_204_NO_CONTENT)
