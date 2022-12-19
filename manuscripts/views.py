@@ -224,7 +224,7 @@ def savedManuscript(request, pk=None):
 
 
 @api_view(['GET'])
-@permission_classes(permissions.AllowAny)
+@permission_classes([permissions.AllowAny])
 def sendAssignedReviewers(request, pk=None):
     try:
         asignRev = ManuRev.objects.filter(manuscript=pk)
