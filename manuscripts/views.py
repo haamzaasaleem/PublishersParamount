@@ -231,4 +231,4 @@ def sendAssignedReviewers(request, pk=None):
         serializer = ManuRevSerializer(asignRev, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
     except:
-        return Response({'asignRev': []}, status=status.HTTP_200_OK)
+        return Response(status=status.HTTP_200_OK)
