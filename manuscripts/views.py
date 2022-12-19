@@ -170,6 +170,7 @@ class AssignedManuscript2Reviewer(viewsets.ModelViewSet):
 
         if manu:
             manu.comment = request.data['comment']
+            manu.recommendation = request.data['recommendation']
             manu.save()
             return Response(
                 {
@@ -227,8 +228,7 @@ def savedManuscript(request, pk=None):
 def sendAssignedReviewers(request, pk=None):
     try:
         asignRev = ManuRev.objects.filter(manuscript=pk)
-        serializer = AssignedManuscript2Reviewer(asignRev, many=True)
+        serializer = ManuRevSerializer(asignRev, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
     except:
-        asignRev = None
-        return Response({'asignRev': None}, status=status.HTTP_200_OK)
+        return Response({'asignRev': []}, status=status.HTTP_200_OK)
