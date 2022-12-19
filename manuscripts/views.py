@@ -205,7 +205,7 @@ class AssignedManuscript2Editor(viewsets.ModelViewSet):
 
 
 @api_view(['POST'])
-@permission_classes((permissions.AllowAny,))
+@permission_classes([permissions.AllowAny])
 def AssignManuscriptToEditor(request):
     serializer = ManuEditorSerializer(data=request.data)
     if serializer.is_valid():
@@ -215,7 +215,7 @@ def AssignManuscriptToEditor(request):
 
 
 @api_view(['GET'])
-@permission_classes((permissions.AllowAny,))
+@permission_classes([permissions.AllowAny])
 def savedManuscript(request, pk=None):
     manuscripts = Manuscript.objects.filter(journal=pk, saved=True)
 
@@ -232,3 +232,18 @@ def sendAssignedReviewers(request, pk=None):
         return Response(serializer.data, status=status.HTTP_200_OK)
     except:
         return Response(status=status.HTTP_200_OK)
+
+
+@api_view(['PATCH'])
+@permission_classes([permissions.IsAuthenticated])
+def GiveReviewToAuthor(request, pk=None):
+    manuscript = Manuscript.objects.get(id=pk)
+    manuEditorSerializer = ManuEditorSerializer(manuscript, data=request.data, partial=True)
+    if manuEditorSerializer.is_valid():
+        manuEditorSerializer.save()
+        manuscriptSerializer = ManuscriptSerializer(manuscript, data=request.data, partial=True)
+        if manuscriptSerializer.is_valid():
+            manuscriptSerializer.save()
+            return Response(manuscriptSerializer.data, status=status.HTTP_201_CREATED)
+        return Response(manuscriptSerializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    return Response(manuEditorSerializer.errors, status=status.HTTP_400_BAD_REQUEST)
