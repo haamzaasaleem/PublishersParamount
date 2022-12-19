@@ -98,7 +98,6 @@ class Editor(BaseProfile):
 
 
 class Reviewer(BaseProfile):
-    editor = models.ForeignKey(Editor, on_delete=models.CASCADE, null=True,blank=True)
     keywords = models.CharField(max_length=5000, null=True, blank=True)
     journal = models.ForeignKey(Journal, on_delete=models.CASCADE, null=True)
     education = models.CharField(max_length=5000, null=True, blank=True)

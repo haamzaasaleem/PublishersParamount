@@ -9,58 +9,60 @@ from manuscripts.serializers import *
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.parsers import MultiPartParser, FormParser
-from PIL import Image
-from core.settings import BASE_DIR
-from PyPDF2 import PdfFileMerger
-import convertapi
+# from PIL import Image
+# from core.settings import BASE_DIR
+# from PyPDF2 import PdfFileMerger
+# import convertapi
 from accounts.serializers import *
+from .utils import converting2Pdf
+from journals import serialiazers
 
 
 #
-def converting2Pdf(manuscriptID):
-    manuscript = Manuscript.objects.get(id=manuscriptID)
-    # converting Manuscript to pdf
-    inputPath = f'{BASE_DIR}/media/{manuscript.manuscript_file}'
-    manuscript_path = f'{BASE_DIR}/media/mergedPdfs/{manuscript.manuscript_file}'
-    fileList = [manuscript_path]
-
-    result = convertapi.convert('pdf', {'File': f'{inputPath}'})
-    result.file.save(f'{fileList[0]}')
-    if manuscript.abstract_file is not None:
-        abstract_path = f'{BASE_DIR}/media/mergedPdfs/{manuscript.abstract_file}'
-        fileList.append(abstract_path)
-        inputPath = f'{BASE_DIR}/media/{manuscript.abstract_file}'
-        result = convertapi.convert('pdf', {'File': f'{inputPath}'})
-        result.file.save(f'{fileList[1]}')
-    if manuscript.cover_file is not None:
-        cover_path = f'{BASE_DIR}/media/mergedPdfs/{manuscript.cover_file}'
-        fileList.append(cover_path)
-        inputPath = f'{BASE_DIR}/media/{manuscript.cover_file}'
-        result = convertapi.convert('pdf', {'File': f'{inputPath}'})
-        result.file.save(f'{fileList[2]}')
-    files_path = ''
-    try:
-        allfiles = Figure.objects.filter(manuscript=manuscriptID)
-        for file in range(len(allfiles)):
-            img = Image.open(rf'{BASE_DIR}/media/{file.file}')
-            filename = file.split('/')
-
-            files_path = rf'{BASE_DIR}/media/convertedpdfs/{manuscriptID}-{filename[-1]}.pdf'
-
-            temp = img.convert('RGB')
-            temp.save(f'{files_path}')
-            fileList.append(files_path)
-    except:
-        pass
-
-    merger = PdfFileMerger()
-    for pdf_file in fileList:
-        merger.append(pdf_file)
-
-    mergedPdfPath = f'{BASE_DIR}/media/mergedPDfs/{manuscriptID}.pdf'
-    merger.write(mergedPdfPath)
-    merger.close()
-    return mergedPdfPath
+# def converting2Pdf(manuscriptID):
+#     manuscript = Manuscript.objects.get(id=manuscriptID)
+#     # converting Manuscript to pdf
+#     inputPath = f'{BASE_DIR}/media/{manuscript.manuscript_file}'
+#     manuscript_path = f'{BASE_DIR}/media/mergedPdfs/{manuscript.manuscript_file}'
+#     fileList = [manuscript_path]
+#
+#     result = convertapi.convert('pdf', {'File': f'{inputPath}'})
+#     result.file.save(f'{fileList[0]}')
+#     if manuscript.abstract_file is not None:
+#         abstract_path = f'{BASE_DIR}/media/mergedPdfs/{manuscript.abstract_file}'
+#         fileList.append(abstract_path)
+#         inputPath = f'{BASE_DIR}/media/{manuscript.abstract_file}'
+#         result = convertapi.convert('pdf', {'File': f'{inputPath}'})
+#         result.file.save(f'{fileList[1]}')
+#     if manuscript.cover_file is not None:
+#         cover_path = f'{BASE_DIR}/media/mergedPdfs/{manuscript.cover_file}'
+#         fileList.append(cover_path)
+#         inputPath = f'{BASE_DIR}/media/{manuscript.cover_file}'
+#         result = convertapi.convert('pdf', {'File': f'{inputPath}'})
+#         result.file.save(f'{fileList[2]}')
+#     files_path = ''
+#     try:
+#         allfiles = Figure.objects.filter(manuscript=manuscriptID)
+#         for file in range(len(allfiles)):
+#             img = Image.open(rf'{BASE_DIR}/media/{file.file}')
+#             filename = file.split('/')
+#
+#             files_path = rf'{BASE_DIR}/media/convertedpdfs/{manuscriptID}-{filename[-1]}.pdf'
+#
+#             temp = img.convert('RGB')
+#             temp.save(f'{files_path}')
+#             fileList.append(files_path)
+#     except:
+#         pass
+#
+#     merger = PdfFileMerger()
+#     for pdf_file in fileList:
+#         merger.append(pdf_file)
+#
+#     mergedPdfPath = f'{BASE_DIR}/media/mergedPDfs/{manuscriptID}.pdf'
+#     merger.write(mergedPdfPath)
+#     merger.close()
+#     return mergedPdfPath
 
 
 ##Creating Manuscript
@@ -73,6 +75,7 @@ class ManuscriptViewSet(viewsets.ModelViewSet):
     def list(self, request):
         user = request.user.id
         author = Author.objects.get(user_id=user)
+
         manuscript = Manuscript.objects.filter(author_id=author.id)
         serializer = ManuscriptSerializer(manuscript, many=True)
         return Response(serializer.data)
@@ -87,15 +90,23 @@ class ManuscriptViewSet(viewsets.ModelViewSet):
             "article_type": request.data['article_type'],
             "manuscript_file": request.data['article_file'],
             "cover_file": request.data['cover_letter'],
+            "abstract_file": request.data['abstract_file'],
+            "figure_file": request.data['figure_file'],
             "author": author.id
         }
 
         serializer = ManuscriptSerializer(data=manuscript_data)
 
         if serializer.is_valid():
+
             serializer.save()
+            # mergedFile = converting2Pdf(serializer.data)
+            # import pdb;
+            # pdb.set_trace()
 
             manuscript = Manuscript.objects.get(title=request.data['title'])
+            # manuscript.mergedPdf = mergedFile
+            manuscript.save()
             coAuthor_data = {
                 "name": request.data['coAuthor_name'],
                 "email": request.data['coAuthor_email'],
@@ -247,3 +258,16 @@ def GiveReviewToAuthor(request, pk=None):
             return Response(manuscriptSerializer.data, status=status.HTTP_201_CREATED)
         return Response(manuscriptSerializer.errors, status=status.HTTP_400_BAD_REQUEST)
     return Response(manuEditorSerializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+@api_view(['GET'])
+@permission_classes([permissions.AllowAny])
+def listApprovedArticles(request):
+    try:
+        manuscripts = Manuscript.objects.filter(status='approved')
+
+        serializer = ManuscriptSerializer(manuscripts, many=True)
+
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    except:
+        return Response({'msg': "No Manuscript is Published Yet"}, status=status.HTTP_204_NO_CONTENT)

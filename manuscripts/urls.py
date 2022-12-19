@@ -13,4 +13,5 @@ urlpatterns = [
     path('manuscript/saved-manuscripts/<int:pk>/', savedManuscript, name='saved-manuscripts'),
     path('manuscript/send-assigned-manuscripts/<int:pk>/', sendAssignedReviewers, name='send-assigned-manuscript'),
     path('manuscript/editor-decision/<int:pk>/', GiveReviewToAuthor, name='editor-decision'),
+    path('manuscript/published-manuscript/', listApprovedArticles, name='published-manuscript'),
 ]
