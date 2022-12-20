@@ -281,7 +281,7 @@ def plagCheckWebhook(request):
 @permission_classes([permissions.IsAuthenticated])
 def sendEmailforReviewerApproval(request):
     string = str(uuid.uuid4())
-    url = f'localhost:3000/manuscriptApproval/{request.data["reviewer"]}/f{request.data["manuscript"]}/{string}'
+    url = f'http://localhost:3000/manuscriptApproval/{request.data["reviewer"]}/f{request.data["manuscript"]}/{string}'
     data = {
         'string': string,
         'reviewer': request.data["reviewer"],
@@ -295,3 +295,34 @@ def sendEmailforReviewerApproval(request):
         revManuscriptApproval(url, user.email)
         return Response(status=status.HTTP_200_OK)
     return Response(status=status.HTTP_400_BAD_REQUEST)
+
+
+@api_view(['POST'])
+@permission_classes([permissions.AllowAny])
+def assignOrRejectManuByReviewer(request):
+    if request.data['status'] == False:
+        try:
+            string=ManuRevStringModel.objects.get(string=request.data['string'])
+            if string:
+                ManuRevStringModel.objects.get(string=request.data['string']).delete()
+                return Response(status=status.HTTP_200_OK)
+        except:
+            return Response({'msg':"This link is expired"},status=status.HTTP_200_OK)
+
+    if request.data['status'] == True:
+        try:
+            string=ManuRevStringModel.objects.get(string=request.data['string'])
+            if string:
+                data={
+                    "reviewer":request.data['reviewer'],
+                    "manuscript":request.data['manuscript']
+                }
+
+                serializer=ManuRevSerializer(data=data)
+                if serializer.is_valid():
+                    serializer.save()
+                    return Response(serializer.data,status=status.HTTP_200_OK)
+
+        except:
+            return Response({'msg':"This link is expired"},status=status.HTTP_200_OK)
+
