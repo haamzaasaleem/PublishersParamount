@@ -55,12 +55,18 @@ class ManuscriptViewSet(viewsets.ModelViewSet):
         if serializer.is_valid():
 
             serializer.save()
-            new_manuscript_email_task.apply_async([manuscript_data['title'], request.user.email])
-            # mergedFile = converting2Pdf(serializer.data)
+            # new_manuscript_email_task.apply_async([manuscript_data['title'], request.user.email])
+            mergedFile = converting2Pdf(serializer.data)
             manuscript = Manuscript.objects.get(title=request.data['title'])
-            PdfMergerAndConverter.apply_async([serializer.data,manuscript.id])
-            # manuscript.mergedPdf = mergedFile
-            # manuscript.save()
+            # PdfMergerAndConverter.apply_async([serializer.data,manuscript.id])
+            temp = mergedFile.split('/')
+
+            str = '/'
+            for i in range(temp.index('media'), len(temp)):
+                str += temp[i]
+                str += '/'
+            manuscript.mergedPdf = str
+            manuscript.save()
             coAuthor_data = {
                 "name": request.data['coAuthor_name'],
                 "email": request.data['coAuthor_email'],
@@ -243,3 +249,9 @@ def listApprovedJournalArticles(request, pk):
         return Response(serializer.data, status=status.HTTP_200_OK)
     except:
         return Response({'msg': "No Manuscript is Published Yet"}, status=status.HTTP_204_NO_CONTENT)
+
+
+@api_view(['POST'])
+def addReviewer(request):
+    addReviewerMail(request.data['reviewerEmail'])
+    return Response(status=status.HTTP_200_OK)
