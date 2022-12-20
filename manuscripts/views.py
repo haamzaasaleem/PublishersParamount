@@ -323,7 +323,7 @@ def assignOrRejectManuByReviewer(request):
                 serializer=ManuRevSerializer(data=data)
                 if serializer.is_valid():
                     serializer.save()
-                    return Response(serializer.data,status=status.HTTP_200_OK)
+                    return Response({'msg':"Manuscript Accepted Please Login to view"},status=status.HTTP_200_OK)
 
         except:
             return Response({'msg':"This link is expired"},status=status.HTTP_200_OK)
