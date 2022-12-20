@@ -245,3 +245,13 @@ def JournalBasedEditors(request, pk=None):
     editor = Editor.objects.filter(journal=pk)
     serializer = EditorProfileSerializer(editor, many=True)
     return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+
+@api_view(['GET'])
+@permission_classes([permissions.AllowAny])
+def JournalBasedEic(request, pk=None):
+
+    eic = EditorInChief.objects.filter(journal=pk)
+    serializer = EicProfileSerializer(eic, many=True)
+    return Response(serializer.data, status=status.HTTP_200_OK)

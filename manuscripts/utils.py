@@ -2,12 +2,13 @@ from PIL import Image
 from core.settings import BASE_DIR
 from PyPDF2 import PdfFileMerger
 import convertapi
+import requests
+import json
 
 convertapi.api_secret='aeaNORkfmTYYvVGD'
 
 def converting2Pdf(data):
-    import pdb;
-    pdb.set_trace()
+
     manuscript = data['manuscript_file']
     cover_file = data['cover_file']
     abstract_file = data['abstract_file']
@@ -57,7 +58,16 @@ def converting2Pdf(data):
         merger.append(pdf_file)
     temp = manuscript.split('/')
     temp = temp[4].split('.')
-    mergedPdfPath = f'{BASE_DIR}/media/mergedPDfs/{temp[0]}.pdf'
+    mergedPdfPath = f'{BASE_DIR}/media/mergedPdfs/{temp[0]}-merged.pdf'
     merger.write(mergedPdfPath)
     merger.close()
     return mergedPdfPath
+
+
+def PlagCheck():
+    headers = {
+        'Content-type': 'application/json'
+
+    }
+    myobj = json.dumps({'email': 'hamzaasaleem04@gmail.com', 'key': 'e8363887-67ea-4e1b-a7dd-ec400a8be4dc'})
+    response = requests.post('https://id.copyleaks.com/v3/account/login/api', headers=headers, data=myobj)

@@ -2,7 +2,7 @@ from rest_framework import permissions, viewsets
 from rest_framework.decorators import api_view, permission_classes
 
 from accounts.models import Author
-from manuscripts.mailer import *
+from manuscripts.mail import *
 from manuscripts.models import *
 from accounts.models import *
 from manuscripts.serializers import *
@@ -16,6 +16,7 @@ from rest_framework.parsers import MultiPartParser, FormParser
 from accounts.serializers import *
 from .utils import converting2Pdf
 from journals import serialiazers
+from .mail import *
 
 
 #
@@ -100,12 +101,18 @@ class ManuscriptViewSet(viewsets.ModelViewSet):
         if serializer.is_valid():
 
             serializer.save()
-            # mergedFile = converting2Pdf(serializer.data)
-            # import pdb;
-            # pdb.set_trace()
+            mergedFile = converting2Pdf(serializer.data)
 
+            temp =mergedFile.split('/')
+
+            import pdb;
+            pdb.set_trace()
+            str='/'
+            for i in range(temp.index('media'), len(temp)):
+                str +=temp[i]
+                str +='/'
             manuscript = Manuscript.objects.get(title=request.data['title'])
-            # manuscript.mergedPdf = mergedFile
+            manuscript.mergedPdf = str
             manuscript.save()
             coAuthor_data = {
                 "name": request.data['coAuthor_name'],
@@ -115,6 +122,9 @@ class ManuscriptViewSet(viewsets.ModelViewSet):
             coAuthor_serializer = CoAuthorSerializer(data=coAuthor_data)
             if coAuthor_serializer.is_valid():
                 coAuthor_serializer.save()
+
+                new_manuscript_email(manuscript_data["title"], request.user.email)
+                coAuthor_new_manuscript_email(manuscript_data["title"], coAuthor_data['email'])
                 return Response({
                     "msg": "Manuscript added",
                     "data": coAuthor_serializer.data | serializer.data
@@ -183,8 +193,10 @@ class AssignedManuscript2Reviewer(viewsets.ModelViewSet):
             manu.comment = request.data['comment']
             manu.recommendation = request.data['recommendation']
             manu.save()
+            serializer=ManuRevSerializer(manu)
             return Response(
                 {
+
                     "msg": "Updated Successfully"
                 },
                 status=status.HTTP_200_OK)
@@ -273,10 +285,9 @@ def listApprovedArticles(request):
         return Response({'msg': "No Manuscript is Published Yet"}, status=status.HTTP_204_NO_CONTENT)
 
 
-
 @api_view(['GET'])
 @permission_classes([permissions.AllowAny])
-def listApprovedJournalArticles(request,pk):
+def listApprovedJournalArticles(request, pk):
     try:
         manuscripts = Manuscript.objects.filter(status='approved', journal=pk)
 

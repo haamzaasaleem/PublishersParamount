@@ -38,7 +38,7 @@ class Manuscript(models.Model):
     abstract_file = models.FileField(upload_to='manuscripts/abstract/', null=True, blank=True)
     comment = models.CharField(max_length=2000, null=True, blank=True, default='')
     journal = models.ForeignKey(Journal, on_delete=models.CASCADE, related_name='manuscripts', null=True)
-    mergedPdf = models.FileField(upload_to='mergedPdf/manuscripts/', null=True, blank=True)
+    mergedPdf = models.CharField(max_length=2000, null=True, blank=True, default='')
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
 
