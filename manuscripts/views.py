@@ -213,7 +213,7 @@ def sendAssignedReviewers(request, pk=None):
 @api_view(['PATCH'])
 @permission_classes([permissions.IsAuthenticated])
 def GiveReviewToAuthor(request, pk=None):
-    import pdb;pdb.set_trace()
+
     manuscript = Manuscript.objects.get(id=pk)
     manuED=ManuEditor.objects.get(manuscript=manuscript.id)
     manuEditorSerializer = ManuEditorSerializer(manuED, data=request.data, partial=True)
