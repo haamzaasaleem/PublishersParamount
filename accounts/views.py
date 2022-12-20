@@ -204,10 +204,6 @@ class UserRegistration(viewsets.ModelViewSet):
                 'bio': request.data['bio'],
                 'phone': request.data['phone'],
                 'address': request.data['address'],
-                'journal': request.data['journal'],
-                'keywords': request.data['keywords'],
-                'cv': request.data['cv'],
-                'education': request.data['education'],
 
                 # 'user_image': request.data['user_image'],
             }
@@ -220,6 +216,7 @@ class UserRegistration(viewsets.ModelViewSet):
                 profileSerializer = EicProfileSerializer(data=profile_data)
             elif user.role == 'reviewer':
                 profileSerializer = ReviewerProfileSerializer(data=profile_data)
+
             elif user.role == 'eic_staff':
                 profileSerializer = EicStaffProfileSerializer(data=profile_data)
             elif user.role == 'e_staff':
@@ -227,6 +224,12 @@ class UserRegistration(viewsets.ModelViewSet):
 
             if profileSerializer.is_valid():
                 profileSerializer.save()
+                if user_data['role'] == 'reviewer':
+                    rev = Reviewer.objects.get(user=profile_data['user'])
+                    rev.journal = request.data['journal']
+                    rev.education = request.data['education']
+                    rev.cv = request.data['cv']
+                    rev.save()
                 # userRegistrationMailer(user_data, profile_data)
                 return Response(
                     {"msg": "User Created!"},
@@ -246,17 +249,14 @@ def JournalBasedReviewer(request, pk=None):
 @api_view(['GET'])
 @permission_classes([permissions.AllowAny])
 def JournalBasedEditors(request, pk=None):
-
     editor = Editor.objects.filter(journal=pk)
     serializer = EditorProfileSerializer(editor, many=True)
     return Response(serializer.data, status=status.HTTP_200_OK)
 
 
-
 @api_view(['GET'])
 @permission_classes([permissions.AllowAny])
 def JournalBasedEic(request, pk=None):
-
     eic = EditorInChief.objects.filter(journal=pk)
     serializer = EicProfileSerializer(eic, many=True)
     return Response(serializer.data, status=status.HTTP_200_OK)

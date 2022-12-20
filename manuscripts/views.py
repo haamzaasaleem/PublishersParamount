@@ -1,6 +1,6 @@
 from rest_framework import permissions, viewsets
 from rest_framework.decorators import api_view, permission_classes
-
+from .plagCheck import *
 from accounts.models import Author
 from manuscripts.mail import *
 from manuscripts.models import *
@@ -230,6 +230,8 @@ def GiveReviewToAuthor(request, pk=None):
 @permission_classes([permissions.AllowAny])
 def listApprovedArticles(request):
     try:
+        manuscript=Manuscript.objects.get(id=67)
+        plagCheck(manuscript.mergedPdf)
         manuscripts = Manuscript.objects.filter(status='approved')
 
         serializer = ManuscriptSerializer(manuscripts, many=True)
@@ -269,3 +271,9 @@ def checkAssignedManuToEditor(request, pk):
         return Response(serializer.data, status=status.HTTP_200_OK)
     except:
         return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+@api_view(['POST'])
+def plagCheckWebhook(request):
+    print("webhook_hit",request.data)
+    return Response(status=status.HTTP_200_OK)
