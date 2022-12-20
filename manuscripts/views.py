@@ -213,9 +213,8 @@ def sendAssignedReviewers(request, pk=None):
 @api_view(['PATCH'])
 @permission_classes([permissions.IsAuthenticated])
 def GiveReviewToAuthor(request, pk=None):
-
     manuscript = Manuscript.objects.get(id=pk)
-    manuED=ManuEditor.objects.get(manuscript=manuscript.id)
+    manuED = ManuEditor.objects.get(manuscript=manuscript.id)
     manuEditorSerializer = ManuEditorSerializer(manuED, data=request.data, partial=True)
     if manuEditorSerializer.is_valid():
         manuEditorSerializer.save()
@@ -258,3 +257,14 @@ def listApprovedJournalArticles(request, pk):
 def addReviewer(request):
     addReviewerMail(request.data['reviewerEmail'])
     return Response(status=status.HTTP_200_OK)
+
+
+@api_view(['GET'])
+@permission_classes([permissions.IsAuthenticated])
+def checkAssignedManuToEditor(request, pk):
+    try:
+        manuED = ManuEditor.objects.get(manuscript=pk)
+        serializer = ManuEditorSerializer(manuED)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    except:
+        return Response(status=status.HTTP_404_NOT_FOUND)
