@@ -206,7 +206,8 @@ class UserRegistration(viewsets.ModelViewSet):
                 'address': request.data['address'],
                 'journal': request.data['journal'],
                 'keywords': request.data['keywords'],
-                'cv': request.data['cv']
+                'cv': request.data['cv'],
+                'education': request.data['education'],
 
                 # 'user_image': request.data['user_image'],
             }
