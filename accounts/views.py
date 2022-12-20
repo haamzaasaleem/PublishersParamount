@@ -226,10 +226,17 @@ class UserRegistration(viewsets.ModelViewSet):
                 profileSerializer.save()
                 if user_data['role'] == 'reviewer':
                     rev = Reviewer.objects.get(user=profile_data['user'])
-                    rev.journal = request.data['journal']
-                    rev.education = request.data['education']
-                    rev.cv = request.data['cv']
-                    rev.save()
+                    rev_data = {
+                        'journal': request.data['journal'],
+                        'education': request.data['education'],
+                        'cv': request.data['cv']
+                    }
+                    revSerializer = ReviewerProfileSerializer(rev, data=rev_data, partial=True)
+                    if revSerializer.is_valid():
+                        revSerializer.save()
+                        return Response(
+                            {"msg": "User Created!"},
+                            status=status.HTTP_201_CREATED)
                 # userRegistrationMailer(user_data, profile_data)
                 return Response(
                     {"msg": "User Created!"},

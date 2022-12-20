@@ -230,12 +230,8 @@ def GiveReviewToAuthor(request, pk=None):
 @permission_classes([permissions.AllowAny])
 def listApprovedArticles(request):
     try:
-        manuscript=Manuscript.objects.get(id=67)
-        plagCheck(manuscript.mergedPdf)
         manuscripts = Manuscript.objects.filter(status='approved')
-
         serializer = ManuscriptSerializer(manuscripts, many=True)
-
         return Response(serializer.data, status=status.HTTP_200_OK)
     except:
         return Response({'msg': "No Manuscript is Published Yet"}, status=status.HTTP_204_NO_CONTENT)
