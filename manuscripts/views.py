@@ -252,6 +252,7 @@ def listApprovedJournalArticles(request, pk):
 
 
 @api_view(['POST'])
+@permission_classes([permissions.IsAuthenticated])
 def addReviewer(request):
     addReviewerMail(request.data['reviewerEmail'])
     return Response(status=status.HTTP_200_OK)

@@ -204,6 +204,10 @@ class UserRegistration(viewsets.ModelViewSet):
                 'bio': request.data['bio'],
                 'phone': request.data['phone'],
                 'address': request.data['address'],
+                'journal': request.data['journal'],
+                'keywords': request.data['keywords'],
+                'cv': request.data['cv']
+
                 # 'user_image': request.data['user_image'],
             }
             profileSerializer = None
