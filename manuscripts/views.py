@@ -262,9 +262,10 @@ def addReviewer(request):
 @api_view(['GET'])
 @permission_classes([permissions.IsAuthenticated])
 def checkAssignedManuToEditor(request, pk):
+    import pdb;pdb.set_trace()
     try:
         manuED = ManuEditor.objects.get(manuscript=pk)
         serializer = ManuEditorSerializer(manuED)
         return Response(serializer.data, status=status.HTTP_200_OK)
     except:
-        return Response(status=status.HTTP_404_NOT_FOUND)
+        return Response(status=status.HTTP_204_NO_CONTENT)
