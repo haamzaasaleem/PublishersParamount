@@ -281,7 +281,7 @@ def plagCheckWebhook(request):
 @permission_classes([permissions.IsAuthenticated])
 def sendEmailforReviewerApproval(request):
     string = str(uuid.uuid4())
-    url = f'http://localhost:3000/manuscriptApproval/{request.data["reviewer"]}/f{request.data["manuscript"]}/{string}'
+    url = f'http://localhost:3000/manuscriptApproval/{request.data["reviewer"]}/{request.data["manuscript"]}/{string}'
     data = {
         'string': string,
         'reviewer': request.data["reviewer"],
