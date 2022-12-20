@@ -262,7 +262,7 @@ def addReviewer(request):
 @api_view(['GET'])
 @permission_classes([permissions.IsAuthenticated])
 def checkAssignedManuToEditor(request, pk):
-    import pdb;pdb.set_trace()
+
     try:
         manuED = ManuEditor.objects.get(manuscript=pk)
         serializer = ManuEditorSerializer(manuED)
