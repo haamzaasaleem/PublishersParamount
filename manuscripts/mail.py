@@ -13,7 +13,6 @@ def new_manuscript_email(title,to_email):
 
 
 def coAuthor_new_manuscript_email(title,to_email):
-    import pdb;pdb.set_trace()
     subject = 'Added as a Co Author'
     html_message = render_to_string('CoAuthorNewManuscriptMailer.html', {'context': f'{title}'})
     plain_message = strip_tags(html_message)

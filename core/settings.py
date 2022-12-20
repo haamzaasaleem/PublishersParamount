@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     'emailer',
     'django_rest_passwordreset',
     'django_extensions',
+    'celery'
 ]
 
 MIDDLEWARE = [
@@ -149,7 +150,6 @@ REST_FRAMEWORK = {
     )
 }
 
-
 PASSWORD_HASHERS = [
     'django.contrib.auth.hashers.PBKDF2PasswordHasher',
     'django.contrib.auth.hashers.PBKDF2SHA1PasswordHasher',
@@ -217,8 +217,10 @@ EMAIL_PORT = 587
 EMAIL_HOST_USER = 'apikey'
 EMAIL_HOST_PASSWORD = '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'
 
+CELERY_BROKER_URL = 'redis://127.0.0.1:6379'
+CELERY_BACKEND = 'redis://127.0.0.1:6379'
 
-GRAPH_MODELS ={
+GRAPH_MODELS = {
     'all_applications': True,
     'graph_models': True,
-     }
+}

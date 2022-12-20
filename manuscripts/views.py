@@ -17,53 +17,7 @@ from accounts.serializers import *
 from .utils import converting2Pdf
 from journals import serialiazers
 from .mail import *
-
-
-#
-# def converting2Pdf(manuscriptID):
-#     manuscript = Manuscript.objects.get(id=manuscriptID)
-#     # converting Manuscript to pdf
-#     inputPath = f'{BASE_DIR}/media/{manuscript.manuscript_file}'
-#     manuscript_path = f'{BASE_DIR}/media/mergedPdfs/{manuscript.manuscript_file}'
-#     fileList = [manuscript_path]
-#
-#     result = convertapi.convert('pdf', {'File': f'{inputPath}'})
-#     result.file.save(f'{fileList[0]}')
-#     if manuscript.abstract_file is not None:
-#         abstract_path = f'{BASE_DIR}/media/mergedPdfs/{manuscript.abstract_file}'
-#         fileList.append(abstract_path)
-#         inputPath = f'{BASE_DIR}/media/{manuscript.abstract_file}'
-#         result = convertapi.convert('pdf', {'File': f'{inputPath}'})
-#         result.file.save(f'{fileList[1]}')
-#     if manuscript.cover_file is not None:
-#         cover_path = f'{BASE_DIR}/media/mergedPdfs/{manuscript.cover_file}'
-#         fileList.append(cover_path)
-#         inputPath = f'{BASE_DIR}/media/{manuscript.cover_file}'
-#         result = convertapi.convert('pdf', {'File': f'{inputPath}'})
-#         result.file.save(f'{fileList[2]}')
-#     files_path = ''
-#     try:
-#         allfiles = Figure.objects.filter(manuscript=manuscriptID)
-#         for file in range(len(allfiles)):
-#             img = Image.open(rf'{BASE_DIR}/media/{file.file}')
-#             filename = file.split('/')
-#
-#             files_path = rf'{BASE_DIR}/media/convertedpdfs/{manuscriptID}-{filename[-1]}.pdf'
-#
-#             temp = img.convert('RGB')
-#             temp.save(f'{files_path}')
-#             fileList.append(files_path)
-#     except:
-#         pass
-#
-#     merger = PdfFileMerger()
-#     for pdf_file in fileList:
-#         merger.append(pdf_file)
-#
-#     mergedPdfPath = f'{BASE_DIR}/media/mergedPDfs/{manuscriptID}.pdf'
-#     merger.write(mergedPdfPath)
-#     merger.close()
-#     return mergedPdfPath
+from .tasks import *
 
 
 ##Creating Manuscript
@@ -101,19 +55,12 @@ class ManuscriptViewSet(viewsets.ModelViewSet):
         if serializer.is_valid():
 
             serializer.save()
-            mergedFile = converting2Pdf(serializer.data)
-
-            temp =mergedFile.split('/')
-
-            import pdb;
-            pdb.set_trace()
-            str='/'
-            for i in range(temp.index('media'), len(temp)):
-                str +=temp[i]
-                str +='/'
+            new_manuscript_email_task.apply_async([manuscript_data['title'], request.user.email])
+            # mergedFile = converting2Pdf(serializer.data)
             manuscript = Manuscript.objects.get(title=request.data['title'])
-            manuscript.mergedPdf = str
-            manuscript.save()
+            PdfMergerAndConverter.apply_async([serializer.data,manuscript.id])
+            # manuscript.mergedPdf = mergedFile
+            # manuscript.save()
             coAuthor_data = {
                 "name": request.data['coAuthor_name'],
                 "email": request.data['coAuthor_email'],
@@ -124,7 +71,7 @@ class ManuscriptViewSet(viewsets.ModelViewSet):
                 coAuthor_serializer.save()
 
                 new_manuscript_email(manuscript_data["title"], request.user.email)
-                coAuthor_new_manuscript_email(manuscript_data["title"], coAuthor_data['email'])
+                coAuthor_new_manuscript_email_task.apply_async([manuscript_data["title"], coAuthor_data['email']])
                 return Response({
                     "msg": "Manuscript added",
                     "data": coAuthor_serializer.data | serializer.data
@@ -193,7 +140,7 @@ class AssignedManuscript2Reviewer(viewsets.ModelViewSet):
             manu.comment = request.data['comment']
             manu.recommendation = request.data['recommendation']
             manu.save()
-            serializer=ManuRevSerializer(manu)
+            serializer = ManuRevSerializer(manu)
             return Response(
                 {
 

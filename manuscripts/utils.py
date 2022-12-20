@@ -4,10 +4,12 @@ from PyPDF2 import PdfFileMerger
 import convertapi
 import requests
 import json
-
+from .models import *
+from .serializers import *
 convertapi.api_secret='aeaNORkfmTYYvVGD'
 
-def converting2Pdf(data):
+def converting2Pdf(data, manuscript_id):
+    manuscripts = Manuscript.objects.get(id=manuscript_id)
 
     manuscript = data['manuscript_file']
     cover_file = data['cover_file']
@@ -61,7 +63,20 @@ def converting2Pdf(data):
     mergedPdfPath = f'{BASE_DIR}/media/mergedPdfs/{temp[0]}-merged.pdf'
     merger.write(mergedPdfPath)
     merger.close()
-    return mergedPdfPath
+
+    temp = mergedPdfPath.split('/')
+
+    str = '/'
+    for i in range(temp.index('media'), len(temp)):
+        str += temp[i]
+        str += '/'
+
+    data={
+        'mergedPdf':str
+    }
+    serializer=ManuscriptSerializer(manuscripts, data=data, partial=True)
+    if serializer.is_valid():
+        serializer.save()
 
 
 def PlagCheck():
