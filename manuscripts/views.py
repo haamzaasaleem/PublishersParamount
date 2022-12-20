@@ -288,7 +288,7 @@ def sendEmailforReviewerApproval(request):
         'manuscript': request.data["manuscript"],
     }
     rev = Reviewer.objects.get(id=request.data["reviewer"])
-    user = User.objects.get(id=rev.user)
+    user = User.objects.get(id=rev.user.id)
     serializer = ManuRevStringModelSerialzer(data=data)
     if serializer.is_valid():
         serializer.save()
