@@ -98,3 +98,10 @@ class CoAuthorModels(models.Model):
     manuscript = models.ForeignKey(Manuscript, on_delete=models.CASCADE, null=True, blank=True)
     name = models.CharField(max_length=200, null=True, blank=True, default='')
     email = models.CharField(max_length=200, null=True, blank=True, default='')
+
+
+class ManuRevStringModel(models.Model):
+    manuscript = models.ForeignKey(Manuscript, on_delete=models.CASCADE)
+    reviewer = models.ForeignKey(Reviewer, on_delete=models.CASCADE, null=True, blank=True)
+    string=models.CharField(max_length=200)
+

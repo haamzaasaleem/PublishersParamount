@@ -18,6 +18,7 @@ from .utils import converting2Pdf
 from journals import serialiazers
 from .mail import *
 from .tasks import *
+import uuid
 
 
 ##Creating Manuscript
@@ -109,7 +110,9 @@ class SaveManuscriptView(viewsets.ModelViewSet):
         manuscript = Manuscript.objects.get(id=manuscript_id)
         manuscript.saved = True
         manuscript.save()
-        # SaveManuscriptMailer(manuscript, manuscript.author)
+        author = Manuscript.objects.get(id=manuscript.author)
+        user = User.objects.get(id=author.user)
+        submitManuscriptMail(user.email)
 
         return Response(
             {'msg': 'uploaded'},
@@ -260,7 +263,6 @@ def addReviewer(request):
 @api_view(['GET'])
 @permission_classes([permissions.IsAuthenticated])
 def checkAssignedManuToEditor(request, pk):
-
     try:
         manuED = ManuEditor.objects.get(manuscript=pk)
         serializer = ManuEditorSerializer(manuED)
@@ -271,5 +273,25 @@ def checkAssignedManuToEditor(request, pk):
 
 @api_view(['POST'])
 def plagCheckWebhook(request):
-    print("webhook_hit",request.data)
+    print("webhook_hit", request.data)
     return Response(status=status.HTTP_200_OK)
+
+
+@api_view(['POST'])
+@permission_classes([permissions.IsAuthenticated])
+def sendEmailforReviewerApproval(request):
+    string = str(uuid.uuid4())
+    url = f'localhost:3000/manuscriptApproval/{request.data["reviewer"]}/f{request.data["manuscript"]}/{string}'
+    data = {
+        'string': string,
+        'reviewer': request.data["reviewer"],
+        'manuscript': request.data["manuscript"],
+    }
+    rev = Reviewer.objects.get(id=request.data["reviewer"])
+    user = User.objects.get(id=rev.user)
+    serializer = ManuRevStringModelSerialzer(data=data)
+    if serializer.is_valid():
+        serializer.save()
+        revManuscriptApproval(url, user.email)
+        return Response(status=status.HTTP_200_OK)
+    return Response(status=status.HTTP_400_BAD_REQUEST)
