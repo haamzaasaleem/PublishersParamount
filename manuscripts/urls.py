@@ -19,4 +19,5 @@ urlpatterns = [
     path('manuscript/check-assign-manuEditor/<int:pk>/', checkAssignedManuToEditor, name='check-assign-manuEditor'),
     path('manuscript/plag-webhook/', plagCheckWebhook, name='check-assign-manuEditor'),
     path('manuscript/send-email-for-reviewer-approval/', sendEmailforReviewerApproval, name='send-email-for-reviewer-approval'),
+    path('manuscript/list-manuscript-AllowAny/<int:pk>/', listManuscriptANY, name='list-manuscript-AllowAny'),
 ]

@@ -224,6 +224,8 @@ def GiveReviewToAuthor(request, pk=None):
         manuscriptSerializer = ManuscriptSerializer(manuscript, data=request.data, partial=True)
         if manuscriptSerializer.is_valid():
             manuscriptSerializer.save()
+
+            # sendDecisionToAuthor(manuscript.)
             return Response(manuscriptSerializer.data, status=status.HTTP_201_CREATED)
         return Response(manuscriptSerializer.errors, status=status.HTTP_400_BAD_REQUEST)
     return Response(manuEditorSerializer.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -326,3 +328,11 @@ def assignOrRejectManuByReviewer(request):
         except:
             return Response({'msg':"This link is expired"},status=status.HTTP_200_OK)
 
+
+
+@api_view(['GET'])
+@permission_classes([permissions.AllowAny])
+def listManuscriptANY(request,pk):
+    manuscript=Manuscript.objects.get(id=pk)
+    serializer=ManuscriptSerializer(manuscript)
+    return Response(serializer.data,status=status.HTTP_200_OK)

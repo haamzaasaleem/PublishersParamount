@@ -51,3 +51,13 @@ def revManuscriptApproval(url,to_email):
         [f'{to_email}'],
         fail_silently=False,
     )
+
+
+def sendDecisionToAuthor(to_email):
+    send_mail(
+        'Manuscript Approval',
+        f'{url}',
+        'haamzaasaleem@gmail.com',
+        [f'{to_email}'],
+        fail_silently=False,
+    )
