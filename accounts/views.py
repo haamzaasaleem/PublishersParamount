@@ -2,6 +2,7 @@ from django.contrib.auth.hashers import make_password
 from rest_framework import viewsets, permissions, generics
 from rest_framework.permissions import IsAuthenticated
 
+from manuscripts.mail import revManuscriptApproval
 from .serializers import *
 from django.contrib.auth import get_user_model
 
@@ -14,6 +15,8 @@ from .models import *
 from rest_framework.decorators import api_view, permission_classes
 import uuid
 from .mailer import *
+from manuscripts.models import *
+from manuscripts.serializers import *
 
 User = get_user_model()
 
@@ -267,3 +270,19 @@ def JournalBasedEic(request, pk=None):
     eic = EditorInChief.objects.filter(journal=pk)
     serializer = EicProfileSerializer(eic, many=True)
     return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+@api_view(['GET'])
+def SetReviewerRegistrationEmail(request, pk=None):
+    try:
+        raise Exception
+        modelData = ReviewerEmailModel.objects.get(string=pk)
+        if modelData:
+            user = User.objects.get(id=modelData.reviewer.user)
+            return Response({
+                'email': user.email
+            }, status=status.HTTP_200_OK)
+    except:
+        return Response({
+            'msg': "Link Expired"
+        }, status=status.HTTP_204_NO_CONTENT)

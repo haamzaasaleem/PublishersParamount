@@ -73,3 +73,9 @@ class ForgotPasswordSerializer(serializers.ModelSerializer):
     class Meta:
         model = ForgetPassword
         fields = '__all__'
+
+
+class ReviewerEmailModelSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ReviewerEmailModel
+        fields = '__all__'

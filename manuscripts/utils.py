@@ -6,7 +6,9 @@ import requests
 import json
 from .models import *
 from .serializers import *
-convertapi.api_secret='aeaNORkfmTYYvVGD'
+
+convertapi.api_secret = 'aeaNORkfmTYYvVGD'
+
 
 # def converting2Pdf(data, manuscript_id):
 #     manuscripts = Manuscript.objects.get(id=manuscript_id)
@@ -80,8 +82,6 @@ convertapi.api_secret='aeaNORkfmTYYvVGD'
 #
 
 def converting2Pdf(data):
-
-
     manuscript = data['manuscript_file']
     cover_file = data['cover_file']
     abstract_file = data['abstract_file']
@@ -90,7 +90,7 @@ def converting2Pdf(data):
     # converting Manuscript to pdf
     inputPath = f'{BASE_DIR}{manuscript}'
     temp = manuscript.split('/')
-    temp=temp[4].split('.')
+    temp = temp[4].split('.')
     manuscript_path = f'{BASE_DIR}/media/mergedPdfs/{temp[0]}.pdf'
     fileList = [manuscript_path]
     result = convertapi.convert('pdf', {'File': f'{inputPath}'})
@@ -115,8 +115,6 @@ def converting2Pdf(data):
         result.file.save(f'{fileList[2]}')
 
     if figure_file is not None:
-
-
         temp = figure_file.split('/')
         temp = temp[4].split('.')
         figure_path = f'{BASE_DIR}/media/mergedPdfs/{temp[0]}.pdf'
@@ -134,7 +132,6 @@ def converting2Pdf(data):
     mergedPdfPath = f'{BASE_DIR}/media/mergedPdfs/{temp[0]}-merged.pdf'
     merger.write(mergedPdfPath)
     merger.close()
-
 
     return mergedPdfPath
 

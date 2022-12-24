@@ -7,7 +7,6 @@ from django.core.mail import send_mail
 from journals.models import Journal
 
 
-
 class User(AbstractUser):
     ADMIN = 'admin'
     STAFF = 'staff'
@@ -92,7 +91,6 @@ class Editor(BaseProfile):
     # eic = models.OneToOneField(EditorInChief, on_delete=models.CASCADE, null=True, blank=True)
     journal = models.ForeignKey(Journal, on_delete=models.CASCADE, null=True)
 
-
     def __str__(self):
         return f"{self.user.username} [{self.user.get_role_display()}]"
 
@@ -119,3 +117,12 @@ class EditorStaff(BaseProfile):
 
     def __str__(self):
         return f"{self.user.username} [{self.user.get_role_display()}]"
+
+
+class ReviewerEmailModel(models.Model):
+    string = models.CharField(max_length=255, default='')
+    email = models.CharField(max_length=255, default='')
+    reviewer = models.CharField(max_length=255, default='')
+    manuscript = models.CharField(max_length=255, default='')
+
+

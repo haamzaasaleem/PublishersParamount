@@ -279,19 +279,26 @@ def plagCheckWebhook(request):
     return Response(status=status.HTTP_200_OK)
 
 
+
+
+
+
 @api_view(['POST'])
 @permission_classes([permissions.IsAuthenticated])
 def sendEmailforReviewerApproval(request):
     string = str(uuid.uuid4())
-    url = f'http://localhost:3000/manuscriptApproval/{request.data["reviewer"]}/{request.data["manuscript"]}/{string}'
+
+    url = f'http://localhost:3000/manuscriptApproval/{string}'
+    rev = Reviewer.objects.get(id=request.data["reviewer"])
+    user = User.objects.get(id=rev.user.id)
     data = {
         'string': string,
         'reviewer': request.data["reviewer"],
         'manuscript': request.data["manuscript"],
+        'email': user.email
     }
-    rev = Reviewer.objects.get(id=request.data["reviewer"])
-    user = User.objects.get(id=rev.user.id)
-    serializer = ManuRevStringModelSerialzer(data=data)
+
+    serializer = ReviewerEmailModelSerializer(data=data)
     if serializer.is_valid():
         serializer.save()
         revManuscriptApproval(url, user.email)
@@ -304,30 +311,29 @@ def sendEmailforReviewerApproval(request):
 def assignOrRejectManuByReviewer(request):
     if request.data['status'] == False:
         try:
-            string=ManuRevStringModel.objects.get(string=request.data['string'])
+            string = ManuRevStringModel.objects.get(string=request.data['string'])
             if string:
                 ManuRevStringModel.objects.get(string=request.data['string']).delete()
                 return Response(status=status.HTTP_200_OK)
         except:
-            return Response({'msg':"This link is expired"},status=status.HTTP_200_OK)
+            return Response({'msg': "This link is expired"}, status=status.HTTP_200_OK)
 
     if request.data['status'] == True:
         try:
-            string=ManuRevStringModel.objects.get(string=request.data['string'])
+            string = ManuRevStringModel.objects.get(string=request.data['string'])
             if string:
-                data={
-                    "reviewer":request.data['reviewer'],
-                    "manuscript":request.data['manuscript']
+                data = {
+                    "reviewer": request.data['reviewer'],
+                    "manuscript": request.data['manuscript']
                 }
 
-                serializer=ManuRevSerializer(data=data)
+                serializer = ManuRevSerializer(data=data)
                 if serializer.is_valid():
                     serializer.save()
-                    return Response({'msg':"Manuscript Accepted Please Login to view"},status=status.HTTP_200_OK)
+                    return Response({'msg': "Manuscript Accepted Please Login to view"}, status=status.HTTP_200_OK)
 
         except:
-            return Response({'msg':"This link is expired"},status=status.HTTP_200_OK)
-
+            return Response({'msg': "This link is expired"}, status=status.HTTP_200_OK)
 
 
 @api_view(['GET'])

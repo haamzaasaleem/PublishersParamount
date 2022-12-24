@@ -13,6 +13,7 @@ urlpatterns = [
     path('accounts/journal-based-reviewers/<int:pk>/', JournalBasedReviewer, name='journal-based-reviewers'),
     path('accounts/journal-based-editors/<int:pk>/', JournalBasedEditors, name='journal-based-editors'),
     path('accounts/journal-based-eic/<int:pk>/', JournalBasedEic, name='journal-based-eic'),
+    path('accounts/email-for-reviewer/<str:pk>/', SetReviewerRegistrationEmail, name='email-for-reviewer'),
     path('forget-password/<str:token>', forgotPasswordView),
 
 ]

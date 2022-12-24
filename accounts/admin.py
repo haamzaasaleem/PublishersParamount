@@ -3,7 +3,6 @@ from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 from accounts.models import *
 
 
-    
 class UserAdmin(BaseUserAdmin):
     list_display = ("username", "email", "first_name", "last_name", "is_staff")
     list_filter = ("is_staff", "is_superuser", "is_active", "role", "gender")
@@ -25,7 +24,6 @@ class UserAdmin(BaseUserAdmin):
     )
 
 
-
 admin.site.register(User, UserAdmin)
 admin.site.register(Author)
 admin.site.register(Editor)
@@ -34,3 +32,8 @@ admin.site.register(Reviewer)
 admin.site.register(EicStaff)
 admin.site.register(EditorStaff)
 admin.site.register(ForgetPassword)
+
+
+@admin.register(ReviewerEmailModel)
+class ReviewerEmailAdmin(admin.ModelAdmin):
+    list_display = ['email', 'string']
