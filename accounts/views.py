@@ -14,7 +14,7 @@ from .models import *
 
 from rest_framework.decorators import api_view, permission_classes
 import uuid
-from .mailer import *
+from .mail import addReviewerMail
 from manuscripts.models import *
 from manuscripts.serializers import *
 
@@ -224,7 +224,9 @@ class UserRegistration(viewsets.ModelViewSet):
                 profileSerializer = EicStaffProfileSerializer(data=profile_data)
             elif user.role == 'e_staff':
                 profileSerializer = EditorStaffProfileSerializer(data=profile_data)
-
+            #     reviewer-Author Panel
+            elif user.role == 'rev_author':
+                profileSerializer = ReviewerAuthorSerializer(data=profile_data)
             if profileSerializer.is_valid():
                 profileSerializer.save()
                 if user_data['role'] == 'reviewer':
@@ -237,6 +239,12 @@ class UserRegistration(viewsets.ModelViewSet):
                     revSerializer = ReviewerProfileSerializer(rev, data=rev_data, partial=True)
                     if revSerializer.is_valid():
                         revSerializer.save()
+                        try:
+                            ReviewerEmailModel.objects.get(email=user_data['email']).delete()
+                        except:
+                            return Response(
+                                {"msg": "User Created!"},
+                                status=status.HTTP_201_CREATED)
                         return Response(
                             {"msg": "User Created!"},
                             status=status.HTTP_201_CREATED)
@@ -275,7 +283,6 @@ def JournalBasedEic(request, pk=None):
 @api_view(['GET'])
 def SetReviewerRegistrationEmail(request, pk=None):
     try:
-        raise Exception
         modelData = ReviewerEmailModel.objects.get(string=pk)
         if modelData:
             user = User.objects.get(id=modelData.reviewer.user)
@@ -286,3 +293,31 @@ def SetReviewerRegistrationEmail(request, pk=None):
         return Response({
             'msg': "Link Expired"
         }, status=status.HTTP_204_NO_CONTENT)
+
+
+@api_view(['POST'])
+@permission_classes([permissions.IsAuthenticated])
+def makeUrlToAddReviewer(request):
+    string = str(uuid.uuid4())
+    email = request.data['reviewerEmail']
+    string = string.replace('-', '')
+    email_data = {
+        'string': string,
+        'email': email
+    }
+    serializer = ReviewerEmailModelSerializer(data=email_data)
+    if serializer.is_valid():
+        serializer.save()
+        addReviewerMail(request.data['reviewerEmail'], string)
+    return Response(status=status.HTTP_200_OK)
+
+
+@api_view(['GET'])
+@permission_classes([permissions.AllowAny])
+def sendEmailToReviewerRegistrationForm(request, pk=None):
+    try:
+        data = ReviewerEmailModel.objects.get(string=pk)
+    except:
+        return Response({'msg': 'This Link is Expired!!'}, status=status.HTTP_204_NO_CONTENT)
+    serializer = ReviewerEmailModelSerializer(data)
+    return Response(serializer.data, status=status.HTTP_200_OK)

@@ -15,5 +15,7 @@ urlpatterns = [
     path('accounts/journal-based-eic/<int:pk>/', JournalBasedEic, name='journal-based-eic'),
     path('accounts/email-for-reviewer/<str:pk>/', SetReviewerRegistrationEmail, name='email-for-reviewer'),
     path('forget-password/<str:token>', forgotPasswordView),
+    path('accounts/add-reviewer/', makeUrlToAddReviewer, name='add-reviewer'),
+    path('accounts/verify-and-send-email/<str:pk>/', sendEmailToReviewerRegistrationForm, name='verify-and-send-email'),
 
 ]

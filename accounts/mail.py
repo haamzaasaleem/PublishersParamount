@@ -1,6 +1,7 @@
 from django.core.mail import EmailMultiAlternatives
 from django.template.loader import render_to_string
 from django.utils.html import strip_tags
+from django.core import mail
 
 
 def resetPasswordMailer(user, data):
@@ -49,3 +50,13 @@ def resetAuthPasswordMailer(user):
     email.attach_alternative(html_content, "text/html")
     email.send()
     return True
+
+
+def addReviewerMail(to_email, string):
+    subject = 'Invited as a Reviewer'
+    html_message = render_to_string('addReviewerMail.html', {'string': string})
+    plain_message = strip_tags(html_message)
+    from_email = 'haamzaasaleem@gmail.com'
+    to = to_email
+
+    mail.send_mail(subject, plain_message, from_email, [to], html_message=html_message)

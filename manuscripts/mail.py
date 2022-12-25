@@ -23,14 +23,7 @@ def coAuthor_new_manuscript_email(title, to_email):
     mail.send_mail(subject, plain_message, from_email, [to], html_message=html_message)
 
 
-def addReviewerMail(to_email):
-    subject = 'Invited as a Reviewer'
-    html_message = render_to_string('addReviewerMail.html')
-    plain_message = strip_tags(html_message)
-    from_email = 'haamzaasaleem@gmail.com'
-    to = to_email
 
-    mail.send_mail(subject, plain_message, from_email, [to], html_message=html_message)
 
 
 def submitManuscriptMail(to_email):

@@ -15,7 +15,6 @@ urlpatterns = [
     path('manuscript/editor-decision/<int:pk>/', GiveReviewToAuthor, name='editor-decision'),
     path('manuscript/published-manuscript/', listApprovedArticles, name='published-manuscript'),
     path('manuscript/approved-journal-manuscript/<int:pk>/', listApprovedJournalArticles, name='approved-journal-manuscript'),
-    path('manuscript/add-reviewer/', addReviewer, name='add-reviewer'),
     path('manuscript/check-assign-manuEditor/<int:pk>/', checkAssignedManuToEditor, name='check-assign-manuEditor'),
     path('manuscript/plag-webhook/', plagCheckWebhook, name='check-assign-manuEditor'),
     path('manuscript/send-email-for-reviewer-approval/', sendEmailforReviewerApproval, name='send-email-for-reviewer-approval'),

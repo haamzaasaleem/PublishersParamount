@@ -63,6 +63,12 @@ class EditorStaffProfileSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
+class ReviewerAuthorSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ReviewerAuthor
+        fields = '__all__'
+
+
 class ResetPasswordSerializer(serializers.ModelSerializer):
     class Meta:
         model = User

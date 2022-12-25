@@ -16,6 +16,7 @@ class User(AbstractUser):
     EIC = 'eic'
     EIC_STAFF = 'eic_staff'
     E_STAFF = 'e_staff'
+    REV_AUTHOR = 'rev_author'
 
     ROLES = (
         (ADMIN, 'Admin'),
@@ -26,6 +27,7 @@ class User(AbstractUser):
         (EIC, 'Editor in Chief'),
         (EIC_STAFF, 'Eic Staff'),
         (E_STAFF, 'Editor Staff'),
+        (REV_AUTHOR, 'Reviewer-Author'),
     )
 
     MALE = 'male'
@@ -119,10 +121,21 @@ class EditorStaff(BaseProfile):
         return f"{self.user.username} [{self.user.get_role_display()}]"
 
 
+
+class ReviewerAuthor(BaseProfile):
+    keywords = models.CharField(max_length=5000, null=True, blank=True)
+    journal = models.ForeignKey(Journal, on_delete=models.CASCADE, null=True)
+    education = models.CharField(max_length=5000, null=True, blank=True)
+    cv = models.FileField(upload_to='cv/', null=True, blank=True)
+
+    def __str__(self):
+        return f"{self.user.username} [{self.user.get_role_display()}]"
+
+
 class ReviewerEmailModel(models.Model):
     string = models.CharField(max_length=255, default='')
     email = models.CharField(max_length=255, default='')
-    reviewer = models.CharField(max_length=255, default='')
-    manuscript = models.CharField(max_length=255, default='')
+    def __str__(self):
+        return f"{self.string} [{self.email}]"
 
 
