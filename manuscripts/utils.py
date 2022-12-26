@@ -4,6 +4,17 @@ from PyPDF2 import PdfFileMerger
 import convertapi
 import requests
 import json
+
+
+from copyleaks.copyleaks import Copyleaks
+from copyleaks.exceptions.command_error import CommandError
+from copyleaks.models.submit.document import FileDocument, UrlDocument, OcrFileDocument
+from copyleaks.models.submit.properties.scan_properties import ScanProperties
+from copyleaks.models.export import *
+
+EMAIL_ADDRESS = 'hamzaasaleem04@gmail.com'
+KEY = 'e8363887-67ea-4e1b-a7dd-ec400a8be4dc'
+
 from .models import *
 from .serializers import *
 
@@ -143,3 +154,14 @@ def PlagCheck():
     }
     myobj = json.dumps({'email': 'hamzaasaleem04@gmail.com', 'key': 'e8363887-67ea-4e1b-a7dd-ec400a8be4dc'})
     response = requests.post('https://id.copyleaks.com/v3/account/login/api', headers=headers, data=myobj)
+
+
+
+def get_token():
+    try:
+        return Copyleaks.login(EMAIL_ADDRESS, KEY)
+    except CommandError as ce:
+        response = ce.get_response()
+        print(f"An error occurred (HTTP status code {response.status_code}):")
+        print(response.content)
+        return

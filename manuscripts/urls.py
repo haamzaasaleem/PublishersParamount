@@ -20,5 +20,5 @@ urlpatterns = [
     path('manuscript/send-email-for-reviewer-approval/', sendEmailforReviewerApproval, name='send-email-for-reviewer-approval'),
     path('manuscript/list-manuscript-AllowAny/<int:pk>/', listManuscriptANY, name='list-manuscript-AllowAny'),
     path('manuscript/accept-reject-manuscript-reviewer/', assignOrRejectManuByReviewer, name='accept-reject-manuscript-reviewer'),
-
+    path('webhook/<str:status>/', webhook, name='copyleaks-webhook'),
 ]

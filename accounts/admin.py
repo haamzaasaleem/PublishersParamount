@@ -25,13 +25,18 @@ class UserAdmin(BaseUserAdmin):
 
 
 admin.site.register(User, UserAdmin)
-admin.site.register(Author)
+# admin.site.register(Author)
 admin.site.register(Editor)
 admin.site.register(EditorInChief)
 admin.site.register(Reviewer)
 admin.site.register(EicStaff)
 admin.site.register(EditorStaff)
 admin.site.register(ForgetPassword)
+
+
+@admin.register(Author)
+class AuthorAdmin(admin.ModelAdmin):
+    list_display = ['id', 'first_name', 'last_name']
 
 
 @admin.register(ReviewerEmailModel)

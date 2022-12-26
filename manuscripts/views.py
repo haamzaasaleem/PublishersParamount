@@ -14,9 +14,11 @@ from rest_framework.parsers import MultiPartParser, FormParser
 # from PyPDF2 import PdfFileMerger
 # import convertapi
 from accounts.serializers import *
-from .utils import converting2Pdf
+from .utils import *
 from journals import serialiazers
 from .mail import *
+
+from .plagCheck import *
 from .tasks import *
 import uuid
 
@@ -37,6 +39,8 @@ class ManuscriptViewSet(viewsets.ModelViewSet):
         return Response(serializer.data)
 
     def create(self, request):
+        import pdb;
+        pdb.set_trace()
         author = Author.objects.get(user_id=request.user.id)
         manuscript_data = {
             "journal": request.data['journal_id'],
@@ -56,6 +60,8 @@ class ManuscriptViewSet(viewsets.ModelViewSet):
         if serializer.is_valid():
 
             serializer.save()
+            file = request.data['article_file']
+            plagCheck(file)
             # new_manuscript_email_task.apply_async([manuscript_data['title'], request.user.email])
             mergedFile = converting2Pdf(serializer.data)
             manuscript = Manuscript.objects.get(title=request.data['title'])
@@ -255,7 +261,6 @@ def listApprovedJournalArticles(request, pk):
         return Response({'msg': "No Manuscript is Published Yet"}, status=status.HTTP_204_NO_CONTENT)
 
 
-
 @api_view(['GET'])
 @permission_classes([permissions.IsAuthenticated])
 def checkAssignedManuToEditor(request, pk):
@@ -271,10 +276,6 @@ def checkAssignedManuToEditor(request, pk):
 def plagCheckWebhook(request):
     print("webhook_hit", request.data)
     return Response(status=status.HTTP_200_OK)
-
-
-
-
 
 
 @api_view(['POST'])
@@ -332,7 +333,7 @@ def assignOrRejectManuByReviewer(request):
 
 @api_view(['GET'])
 @permission_classes([permissions.AllowAny])
-def listManuscriptANY(request,pk):
-    manuscript=Manuscript.objects.get(id=pk)
-    serializer=ManuscriptSerializer(manuscript)
-    return Response(serializer.data,status=status.HTTP_200_OK)
+def listManuscriptANY(request, pk):
+    manuscript = Manuscript.objects.get(id=pk)
+    serializer = ManuscriptSerializer(manuscript)
+    return Response(serializer.data, status=status.HTTP_200_OK)
