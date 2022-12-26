@@ -59,6 +59,7 @@ class ManuscriptViewSet(viewsets.ModelViewSet):
 
         if serializer.is_valid():
 
+
             serializer.save()
             file = request.data['article_file']
             plagCheck(file)
